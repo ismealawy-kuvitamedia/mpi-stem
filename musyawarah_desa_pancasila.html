@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bale Musyawarah: Simulator Keputusan Sosial & Keadilan Warga</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-heritage { font-family: 'Cinzel', serif; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    @keyframes pulseScale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    .active-card { animation: pulseScale 3s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen flex flex-col antialiased">
+
+  <!-- HEADER MEJA MUSYAWARAH -->
+  <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-700 text-amber-50 flex items-center justify-center font-bold text-xl shadow-xs">
+          ⚖️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-900 rounded-md uppercase tracking-wider">Pendidikan Pancasila & IPS</span>
+            <span class="text-xs text-stone-400">• Laboratorium Dilema Sosial</span>
+          </div>
+          <h1 class="text-base font-extrabold text-stone-900 tracking-tight">Bale Musyawarah: Merajut Mufakat & Keadilan Sosial</h1>
+        </div>
+      </div>
+
+      <!-- STATUS HARMONI WARGA (MENGUKUR DAMPAK KEBIJAKAN) -->
+      <div class="flex items-center gap-4 bg-stone-50 border border-stone-200 px-4 py-1.5 rounded-2xl">
+        <div class="text-center">
+          <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Keseimbangan Harmoni</p>
+          <p id="label-harmony" class="text-xs font-extrabold text-stone-800">Menunggu Mufakat...</p>
+        </div>
+        <div class="h-7 w-px bg-stone-200"></div>
+        <div class="text-center">
+          <p class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Sisa Dana Kas Desa</p>
+          <p id="label-budget" class="text-xs font-extrabold text-emerald-700">Rp 100 Juta</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORKSPACE UTAMA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- KOLOM KIRI: ARENA DILEMA & KEPUTUSAN KELOMPOK (7 Kolom) -->
+    <section class="lg:col-span-7 flex flex-col gap-5">
+      
+      <!-- SITUASI KASUS DILEMA KELOMPOK MASYARAKAT -->
+      <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm">
+        <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-3">
+          <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 text-xs font-bold border border-amber-200">
+            🌾 Studi Kasus: Dana Kas Desa Terbatas
+          </span>
+          <span class="text-xs text-stone-400">Total Anggaran Tersedia: <strong>Rp 100 Juta</strong></span>
+        </div>
+        <p class="text-sm text-stone-700 leading-relaxed bg-stone-50 p-4 rounded-2xl border border-stone-100">
+          "Musim kemarau tiba, saluran irigasi sawah jebol dan mengancam gagal panen puluhan petani. Di saat yang sama, posyandu membutuhkan renovasi atap dan makanan bergizi untuk balita stunting. Sementara itu, karang taruna mendesak pembangunan sarana olahraga dan internet gratis agar pemuda desa tidak terjerat pergaulan negatif. Anggaran desa hanya cukup untuk <strong>membiayai maksimal 2 program penuh</strong>, atau <strong>dibagi rata secara kompromi</strong>."
+        </p>
+      </div>
+
+      <!-- KARTU 3 ASPIRASI WARGA DENGAN DUKUNGAN ANGGARAN -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        
+        <!-- Aspirasi 1: Kelompok Tani -->
+        <div id="card-tani" class="bg-white p-4 rounded-2xl border-2 border-stone-200 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">🌾</span>
+              <span id="badge-tani" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-600">Pending</span>
+            </div>
+            <h4 class="text-xs font-bold text-stone-900">Irigasi Sawah Warga</h4>
+            <p class="text-[11px] text-stone-500 mt-1 leading-relaxed">
+              Mencegah gagal panen 40 hektar sawah sumber mata pencaharian utama.
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-stone-100">
+            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Alokasi Dana:</label>
+            <select id="alloc-tani" onchange="runDeliberation()" class="w-full text-xs font-semibold p-2 rounded-xl border border-stone-200 bg-stone-50 focus:outline-hidden">
+              <option value="0">Tidak Dibiayai (Rp 0)</option>
+              <option value="35">Kompromi / Darurat (Rp 35 Juta)</option>
+              <option value="60" selected>Penuh / Tuntas (Rp 60 Juta)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Aspirasi 2: Posyandu & Lansia-Balita -->
+        <div id="card-posyandu" class="bg-white p-4 rounded-2xl border-2 border-stone-200 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">👶</span>
+              <span id="badge-posyandu" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-600">Pending</span>
+            </div>
+            <h4 class="text-xs font-bold text-stone-900">Gizi & Atap Posyandu</h4>
+            <p class="text-[11px] text-stone-500 mt-1 leading-relaxed">
+              Pemberian nutrisi 30 balita rawan stunting dan atap bocor gedung posyandu.
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-stone-100">
+            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Alokasi Dana:</label>
+            <select id="alloc-posyandu" onchange="runDeliberation()" class="w-full text-xs font-semibold p-2 rounded-xl border border-stone-200 bg-stone-50 focus:outline-hidden">
+              <option value="0">Tidak Dibiayai (Rp 0)</option>
+              <option value="30" selected>Penuh / Tuntas (Rp 30 Juta)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Aspirasi 3: Pemuda / Karang Taruna -->
+        <div id="card-pemuda" class="bg-white p-4 rounded-2xl border-2 border-stone-200 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl">⚽</span>
+              <span id="badge-pemuda" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-600">Pending</span>
+            </div>
+            <h4 class="text-xs font-bold text-stone-900">Sarana Pemuda & Wifi</h4>
+            <p class="text-[11px] text-stone-500 mt-1 leading-relaxed">
+              Renovasi lapangan serbaguna dan akses internet edukasi pemuda desa.
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-stone-100">
+            <label class="block text-[10px] font-bold text-stone-400 uppercase mb-1">Alokasi Dana:</label>
+            <select id="alloc-pemuda" onchange="runDeliberation()" class="w-full text-xs font-semibold p-2 rounded-xl border border-stone-200 bg-stone-50 focus:outline-hidden">
+              <option value="0">Tidak Dibiayai (Rp 0)</option>
+              <option value="15">Wifi Saja (Rp 15 Juta)</option>
+              <option value="40">Penuh / Lapangan (Rp 40 Juta)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRINSIP PENGAMBILAN KEPUTUSAN MUSYAWARAH (SILA KE-4 & 5) -->
+      <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm flex flex-col gap-3">
+        <label class="block text-xs font-bold text-stone-700">Pilih Pendekatan Musyawarah (Karakter Pemimpin):</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button onclick="setApproach('otoriter')" id="btn-app-otoriter" class="p-3 rounded-2xl border-2 border-stone-200 text-left hover:border-stone-300 transition-all">
+            <span class="block text-xs font-bold text-stone-800">1. Otoriter / Sepihak</span>
+            <span class="block text-[10px] text-stone-500 mt-0.5">Kepala desa memutuskan sendiri tanpa dialog.</span>
+          </button>
+          <button onclick="setApproach('voting')" id="btn-app-voting" class="p-3 rounded-2xl border-2 border-stone-200 text-left hover:border-stone-300 transition-all">
+            <span class="block text-xs font-bold text-stone-800">2. Voting Mayoritas</span>
+            <span class="block text-[10px] text-stone-500 mt-0.5">Suara terbanyak menang, yang kalah diabaikan.</span>
+          </button>
+          <button onclick="setApproach('mufakat')" id="btn-app-mufakat" class="p-3 rounded-2xl border-2 border-amber-700 bg-amber-50/70 text-left transition-all">
+            <span class="block text-xs font-bold text-amber-950">3. Musyawarah Mufakat</span>
+            <span class="block text-[10px] text-stone-500 mt-0.5">Kompromi santun, semua aspirasi dirangkul adil.</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- KOLOM KANAN: RADAR SOSIAL, DIALOG TOKOH & REFLEKSI (5 Kolom) -->
+    <section class="lg:col-span-5 flex flex-col gap-5">
+      
+      <!-- REFLEKSI SOKRATIK DARI TETUA DESA (ASISTEN BIJAK) -->
+      <div class="bg-gradient-to-br from-stone-900 to-amber-950 text-white rounded-3xl p-5 border border-amber-900/60 shadow-md">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-2xl bg-amber-600 flex items-center justify-center text-xl font-bold shadow-xs">
+            🧓
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider">Mbah Lurah (Tetua Adat)</h4>
+            <span id="lead-status-tag" class="text-[10px] bg-amber-900/80 text-amber-200 px-2 py-0.5 rounded border border-amber-700">Mencari Titik Temu</span>
+          </div>
+        </div>
+        <p id="socratic-village-advice" class="text-sm text-stone-200 leading-relaxed font-normal">
+          "Keputusanmu sudah memprioritaskan pangan dan gizi anak balita. Namun, perhatikan anak-anak muda kita. Jika mereka merasa aspirasinya selalu dinomorduakan tanpa penjelasan yang santun, benih apatisme sosial akan tumbuh."
+        </p>
+      </div>
+
+      <!-- SUARA WARGA DI BALE DESA (SIMULASI DINAMIKA SOSIAL) -->
+      <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between pb-2 border-b border-stone-100">
+          <h3 class="font-bold text-stone-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+            <span>🗣️ Reaksi & Dialog Warga di Bale Desa</span>
+          </h3>
+          <span class="text-[10px] font-bold text-stone-400">Suasana Balai Pertemuan</span>
+        </div>
+
+        <div id="village-dialogues" class="space-y-3">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+
+      <!-- MATRIKS KESEIMBANGAN SOSIAL (THE SOCIAL CONTRACT EQUILIBRIUM) -->
+      <div class="bg-stone-50 rounded-3xl p-5 border border-stone-200 flex flex-col gap-3">
+        <h4 class="text-xs font-bold text-stone-700 uppercase tracking-wider">Indikator Keadilan Sosial (Sila ke-5):</h4>
+        
+        <!-- Ketahanan Pangan -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <span class="font-semibold text-stone-700">Ketahanan Pangan Petani:</span>
+            <span id="val-pangan" class="font-bold text-emerald-700">Aman Terkendali</span>
+          </div>
+          <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+            <div id="bar-pangan" class="bg-emerald-600 h-full rounded-full transition-all duration-500" style="width: 85%;"></div>
+          </div>
+        </div>
+
+        <!-- Kesehatan Generasi Masa Depan -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <span class="font-semibold text-stone-700">Gizi & Hak Hidup Balita:</span>
+            <span id="val-gizi" class="font-bold text-emerald-700">Terpenuhi</span>
+          </div>
+          <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+            <div id="bar-gizi" class="bg-emerald-600 h-full rounded-full transition-all duration-500" style="width: 90%;"></div>
+          </div>
+        </div>
+
+        <!-- Integrasi & Kepemudaan -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs">
+            <span class="font-semibold text-stone-700">Keterlibatan & Harapan Pemuda:</span>
+            <span id="val-pemuda" class="font-bold text-amber-700">Perlu Dialog Lanjutan</span>
+          </div>
+          <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+            <div id="bar-pemuda" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 35%;"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const simState = {
+      budgetMax: 100,
+      approach: 'mufakat', // otoriter | voting | mufakat
+      alloc: {
+        tani: 60,
+        posyandu: 30,
+        pemuda: 0
+      }
+    };
+
+    function setApproach(app) {
+      simState.approach = app;
+      ['otoriter', 'voting', 'mufakat'].forEach(k => {
+        const btn = document.getElementById(`btn-app-${k}`);
+        if (k === app) {
+          btn.className = "p-3 rounded-2xl border-2 border-amber-700 bg-amber-50/70 text-left transition-all shadow-xs";
+          btn.querySelector('span:first-child').className = "block text-xs font-bold text-amber-950";
+        } else {
+          btn.className = "p-3 rounded-2xl border-2 border-stone-200 text-left hover:border-stone-300 transition-all";
+          btn.querySelector('span:first-child').className = "block text-xs font-bold text-stone-800";
+        }
+      });
+      runDeliberation();
+    }
+
+    function runDeliberation() {
+      simState.alloc.tani = parseInt(document.getElementById('alloc-tani').value);
+      simState.alloc.posyandu = parseInt(document.getElementById('alloc-posyandu').value);
+      simState.alloc.pemuda = parseInt(document.getElementById('alloc-pemuda').value);
+
+      const totalUsed = simState.alloc.tani + simState.alloc.posyandu + simState.alloc.pemuda;
+      const remaining = simState.budgetMax - totalUsed;
+
+      // Update Anggaran Kas
+      const budgetEl = document.getElementById('label-budget');
+      if (remaining < 0) {
+        budgetEl.textContent = `Defisit Rp ${Math.abs(remaining)} Juta!`;
+        budgetEl.className = "text-xs font-extrabold text-rose-600 animate-pulse";
+      } else {
+        budgetEl.textContent = `Sisa Rp ${remaining} Juta`;
+        budgetEl.className = "text-xs font-extrabold text-emerald-700";
+      }
+
+      // Update Status Kartu
+      updateCardBadge('tani', simState.alloc.tani, 60, 35);
+      updateCardBadge('posyandu', simState.alloc.posyandu, 30, 15);
+      updateCardBadge('pemuda', simState.alloc.pemuda, 40, 15);
+
+      // Kalkulasi Indikator Sosial (Bukan rumus fisis, tapi logika keadilan)
+      let scorePangan = simState.alloc.tani === 60 ? 95 : (simState.alloc.tani === 35 ? 65 : 15);
+      let scoreGizi = simState.alloc.posyandu === 30 ? 90 : 20;
+      let scorePemuda = simState.alloc.pemuda === 40 ? 90 : (simState.alloc.pemuda === 15 ? 55 : 20);
+
+      // Koreksi pendekatan musyawarah
+      if (simState.approach === 'otoriter') {
+        scorePemuda = Math.max(10, scorePemuda - 25);
+        scorePangan = Math.max(10, scorePangan - 15);
+      } else if (simState.approach === 'mufakat' && simState.alloc.pemuda === 15) {
+        // Kompromi santun meningkatkan penerimaan sosial
+        scorePemuda += 15;
+      }
+
+      // Render Progress Bar
+      renderBar('bar-pangan', 'val-pangan', scorePangan, "Aman Terpenuhi", "Cukup (Darurat)", "Gagal Panen Mengancam");
+      renderBar('bar-gizi', 'val-gizi', scoreGizi, "Gizi & Balita Terlindungi", "Terpenuhi Sebagian", "Krisis Stunting Ditinggalkan");
+      renderBar('bar-pemuda', 'val-pemuda', scorePemuda, "Pemuda Terberdayakan", "Puas Berkompromi", "Apatis & Kecewa");
+
+      // Update Dialog Warga & Respon Sokratik
+      renderVillageFeedback(remaining, scorePangan, scoreGizi, scorePemuda);
+    }
+
+    function updateCardBadge(id, val, full, partial) {
+      const badge = document.getElementById(`badge-${id}`);
+      const card = document.getElementById(`card-${id}`);
+      if (val === full) {
+        badge.textContent = "Didanai Penuh";
+        badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800";
+        card.className = "bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-xs transition-all flex flex-col justify-between";
+      } else if (val > 0) {
+        badge.textContent = "Kompromi";
+        badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800";
+        card.className = "bg-white p-4 rounded-2xl border-2 border-amber-400 transition-all flex flex-col justify-between";
+      } else {
+        badge.textContent = "Ditunda / Rp 0";
+        badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-500";
+        card.className = "bg-white p-4 rounded-2xl border-2 border-stone-200 transition-all opacity-85 flex flex-col justify-between";
+      }
+    }
+
+    function renderBar(barId, valId, score, textHigh, textMid, textLow) {
+      const bar = document.getElementById(barId);
+      const val = document.getElementById(valId);
+      bar.style.width = `${score}%`;
+      if (score >= 75) {
+        bar.className = "bg-emerald-600 h-full rounded-full transition-all duration-500";
+        val.className = "font-bold text-emerald-700";
+        val.textContent = textHigh;
+      } else if (score >= 45) {
+        bar.className = "bg-amber-500 h-full rounded-full transition-all duration-500";
+        val.className = "font-bold text-amber-700";
+        val.textContent = textMid;
+      } else {
+        bar.className = "bg-rose-500 h-full rounded-full transition-all duration-500";
+        val.className = "font-bold text-rose-700";
+        val.textContent = textLow;
+      }
+    }
+
+    function renderVillageFeedback(remaining, pangan, gizi, pemuda) {
+      const dialogues = document.getElementById('village-dialogues');
+      const socratic = document.getElementById('socratic-village-advice');
+      const harmonyLabel = document.getElementById('label-harmony');
+
+      dialogues.innerHTML = '';
+
+      if (remaining < 0) {
+        harmonyLabel.textContent = "Kekacauan Anggaran";
+        socratic.innerHTML = `<strong>"Astaqfirullah, ananda!"</strong> Rencana pembangunanmu melebihi kas desa sebesar <strong>Rp ${Math.abs(remaining)} Juta</strong>. Pemimpin yang bijak tidak boleh memaksakan janji manis jika berujung pada utang desa yang mencekik warga. Musyawarahkan kembali prioritasmu!`;
+        addDialogue("BPD (Badan Permusyawaratan Desa)", "Rencana ini cacat hukum dan defisit! Kami tolak sebelum APBDes disesuaikan.", "text-rose-600");
+        return;
+      }
+
+      // Dialog Petani
+      if (pangan >= 75) {
+        addDialogue("Pak Darso (Ketua Poktan)", "Alhamdulillah, sawah kami terselamatkan. Kami siap gotong royong tenaganya!", "text-emerald-700");
+      } else if (pangan >= 45) {
+        addDialogue("Pak Darso (Ketua Poktan)", "Irigasi darurat cukup untuk musim ini, kami mengerti posyandu juga mendesak.", "text-amber-700");
+      } else {
+        addDialogue("Pak Darso (Ketua Poktan)", "Kalau irigasi mati, 40 keluarga petani mau makan apa? Kami sangat kecewa!", "text-rose-600");
+      }
+
+      // Dialog Posyandu
+      if (gizi >= 75) {
+        addDialogue("Bu Bidan Lestari", "Terima kasih, anak-anak balita kita terjamin makanannya dan ruang periksa tidak bocor lagi.", "text-emerald-700");
+      } else {
+        addDialogue("Bu Bidan Lestari", "Gedung posyandu masih bocor dan susu balita habis... masa depan anak-anak dipertaruhkan.", "text-rose-600");
+      }
+
+      // Dialog Pemuda
+      if (pemuda >= 70) {
+        addDialogue("Rian (Ketua Karang Taruna)", "Keren! Lapangan dan ruang wifi ini bakal bikin anak muda betah berkarya di desa.", "text-emerald-700");
+      } else if (pemuda >= 45) {
+        addDialogue("Rian (Ketua Karang Taruna)", "Meskipun lapangan ditunda, kami hargai internet desa yang tetap diadakan untuk belajar online.", "text-amber-700");
+      } else {
+        addDialogue("Rian (Ketua Karang Taruna)", "Suara kami selalu dianggap tidak penting. Jangan salahkan pemuda kalau memilih merantau ke kota.", "text-rose-600");
+      }
+
+      // Evaluasi Musyawarah
+      if (simState.approach === 'otoriter') {
+        harmonyLabel.textContent = "Tegang & Tertekan";
+        socratic.innerHTML = `"Kamu berhasil menghemat anggaran, tetapi gayamu yang <strong>otoriter</strong> menimbulkan rasa dongkol di hati warga. Tanpa dialog santun, keputusan sebaik apa pun akan ditentang di belakang hari."`;
+      } else if (pangan >= 60 && gizi >= 70 && pemuda >= 45 && simState.approach === 'mufakat') {
+        harmonyLabel.textContent = "Harmoni Mufakat Tercapai";
+        socratic.innerHTML = `<strong>"Luar biasa, inilah kearifan Pancasila sejati!"</strong> Kamu tidak mematikan salah satu kelompok secara kejam. Petani selamat lewat perbaikan darurat, balita terlindungi nutrisinya, dan pemuda tetap dirangkul dengan akses internet. Inilah esensi <em>keadilan sosial dan musyawarah mufakat</em>.`;
+      } else {
+        harmonyLabel.textContent = "Belum Seimbang";
+        socratic.innerHTML = `"Anggaran mencukupi, namun perhatikan kelompok yang merasa ditinggalkan. Dalam tradisi musyawarah, jika satu pihak harus mengalah, pemimpin harus menjelaskan alasannya dengan penuh empati dan menawarkan solusi alternatif."`;
+      }
+    }
+
+    function addDialogue(speaker, text, color) {
+      const div = document.createElement('div');
+      div.className = "p-3 rounded-2xl bg-stone-50 border border-stone-200/80 text-xs";
+      div.innerHTML = `
+        <span class="font-bold text-stone-800 block mb-0.5">${speaker}</span>
+        <p class="${color} leading-relaxed font-medium">"${text}"</p>
+      `;
+      document.getElementById('village-dialogues').appendChild(div);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      runDeliberation();
+    });
+  </script>
+</body>
+</html>
