@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redaksi Cilik: Simulasi Reaksi Bahasa & Opini Publik</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif-news { font-family: 'Newsreader', serif; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .comment-enter { animation: slideInUp 0.35s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- HEADER RUANG REDAKSI -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-serif-news text-xl font-bold italic shadow-xs">
+          R
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 rounded-md uppercase tracking-wider">Simulasi Bahasa &amp; Komunikasi</span>
+            <span class="text-xs text-slate-400">â€¢ Laboratorium Redaksi Interaktif</span>
+          </div>
+          <h1 class="text-base font-extrabold text-slate-900 tracking-tight">Ruang Redaksi: Uji Dampak &amp; Rasa Bahasa</h1>
+        </div>
+      </div>
+
+      <!-- KONDISI EMOSI PUBLIK (BUKAN SLIDER ANGKA, TAPI RADAR PERSEPSI) -->
+      <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-2xl">
+        <div class="text-right">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Suasana Pembaca</p>
+          <p id="sentiment-summary" class="text-xs font-bold text-slate-700">Menunggu Terbitan...</p>
+        </div>
+        <div id="sentiment-indicator" class="w-9 h-9 rounded-xl bg-slate-200 flex items-center justify-center text-lg transition-all duration-300">
+          ðŸ“°
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORKSPACE UTAMA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- KOLOM KIRI: MEJA PENYUSUNAN REDAKSI (7 Kolom) -->
+    <section class="lg:col-span-7 flex flex-col gap-5">
+      
+      <!-- KARTU KASUS FAKTA PERISTIWA (KONTEN INTI) -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
+            ðŸ“Œ Fakta Mentah Lapangan (5W + 1H)
+          </span>
+          <span class="text-xs text-slate-400 font-medium">Bahan Berita Majalah Dinding &amp; Web Sekolah</span>
+        </div>
+        <p class="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100 font-medium">
+          "Senin pagi, jam istirahat pertama di kantin sekolah. Antrean makanan sempat menumpuk karena mesin kasir kas digital mati mendadak selama 15 menit. Penjaga kantin dan pengurus OSIS langsung berinisiatif mencatat pesanan manual sehingga semua siswa tetap kebagian makan siang tanpa ada keributan."
+        </p>
+      </div>
+
+      <!-- KEMUDI PENYUSUNAN TEKS (Diksi, Sudut Pandang/Angle, Nada Bahasa) -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm flex flex-col gap-4">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold">1</span>
+          Keputusan Redaksional Penulis
+        </h3>
+
+        <!-- Pilihan 1: Sudut Pandang (Angle / Framing) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">A. Tentukan Sudut Pandang (Framing Isu):</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <button onclick="setFraming('krisis')" id="btn-frame-krisis" class="p-3 rounded-2xl border-2 border-slate-200 text-left hover:border-slate-300 transition-all">
+              <span class="block text-xs font-bold text-slate-800">Sensasional (Krisis)</span>
+              <span class="block text-[11px] text-slate-500 mt-0.5">Menyorot antrean panjang dan kepanikan sistem.</span>
+            </button>
+            <button onclick="setFraming('solutif')" id="btn-frame-solutif" class="p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-left transition-all">
+              <span class="block text-xs font-bold text-indigo-950">Solutif &amp; Kolaboratif</span>
+              <span class="block text-[11px] text-slate-500 mt-0.5">Menyorot kesigapan OSIS menangani masalah.</span>
+            </button>
+            <button onclick="setFraming('kambinghitam')" id="btn-frame-kambinghitam" class="p-3 rounded-2xl border-2 border-slate-200 text-left hover:border-slate-300 transition-all">
+              <span class="block text-xs font-bold text-slate-800">Menyalahkan (Blaming)</span>
+              <span class="block text-[11px] text-slate-500 mt-0.5">Menyalahkan kualitas mesin atau pihak kantin.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pilihan 2: Diksi Judul (Headline Hook) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">B. Pilih Diksi Judul Berita:</label>
+          <select id="select-headline" onchange="updateArticle()" class="w-full text-xs font-semibold p-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-hidden transition-all">
+            <!-- Pilihan diisi dinamis via JS -->
+          </select>
+        </div>
+
+        <!-- Pilihan 3: Konjungsi & Struktur Paragraf -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">C. Nada Kalimat Penutup (Konklusi):</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setConclusion('reflektif')" id="btn-conc-reflektif" class="p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-left text-xs font-semibold text-indigo-950">
+              ðŸŒ± Mengajak Saling Dukung &amp; Apresiasi
+            </button>
+            <button onclick="setConclusion('provokatif')" id="btn-conc-provokatif" class="p-2.5 rounded-xl border-2 border-slate-200 text-left text-xs font-semibold text-slate-700 hover:border-slate-300">
+              ðŸ”¥ Menuntut Ganti Rugi &amp; Protes Keras
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KANVAS ARTIKEL CETAK (MOCKUP KORAN / WEB SEKOLAH) -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between pb-3 border-b-2 border-slate-900 mb-4">
+          <span class="font-serif-news text-xs font-bold uppercase tracking-widest text-slate-900">Warta Pesantren &amp; Sekolah â€¢ Edisi Khusus</span>
+          <span class="text-[11px] text-slate-400 font-mono">Draf Cetak Siap Terbit</span>
+        </div>
+
+        <!-- Preview Judul -->
+        <h2 id="preview-headline" class="font-serif-news text-xl sm:text-2xl font-bold text-slate-900 leading-snug mb-2">
+          Mesin Kasir Ngadat, Kekompakan OSIS dan Kantin Selamatkan Makan Siang Siswa
+        </h2>
+        <div class="flex items-center gap-2 text-[11px] text-slate-400 mb-4 pb-3 border-b border-slate-100">
+          <span>Oleh: <strong>Jurnalis Santri</strong></span>
+          <span>â€¢</span>
+          <span id="preview-tag" class="px-2 py-0.5 rounded-sm bg-indigo-50 text-indigo-700 font-bold uppercase tracking-wide text-[9px]">Laras Berita Positif</span>
+        </div>
+
+        <!-- Teks Tubuh Artikel -->
+        <div class="prose prose-sm text-slate-700 leading-relaxed font-serif-news text-base">
+          <p id="preview-lead">
+            Kendala teknis pada mesin kasir digital di kantin sekolah sempat menimbulkan antrean panjang pagi ini. Namun, berkat kesigapan pengurus OSIS dan pengelola kantin yang sigap beralih ke pencatatan manual, ratusan siswa tetap terlayani secara tertib dan kondusif.
+          </p>
+          <blockquote id="preview-quote" class="border-l-4 border-indigo-500 pl-3 italic text-slate-600 text-sm my-3 font-sans">
+            "Alhamdulillah, semua saling bantu. Kami hanya ingin teman-teman tidak terlambat masuk kelas," ujar perwakilan OSIS.
+          </blockquote>
+          <p id="preview-closing" class="text-sm font-sans text-slate-600 font-medium">
+            Peristiwa ini membuktikan bahwa kendala teknologi dapat diatasi dengan adab saling memahami dan komunikasi yang cepat.
+          </p>
+        </div>
+
+        <!-- Tombol Terbitkan & Uji Respon -->
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-xs text-slate-500">Klik untuk melihat bagaimana kata-katamu menggerakkan orang lain:</span>
+          <button onclick="publishArticle()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-md transition-all flex items-center gap-2">
+            <span>Terbitkan ke Publik</span>
+            <span>ðŸš€</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- KOLOM KANAN: SIMULASI RESPON PUBLIK & CERMIN RASA BAHASA (5 Kolom) -->
+    <section class="lg:col-span-5 flex flex-col gap-5">
+      
+      <!-- UMPAN BALIK SOKRATIK DARI PEMBIMBING REDAKSI -->
+      <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl p-5 border border-indigo-800 shadow-md">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-lg font-bold">
+            âœï¸
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Ustadz / Pembina Jurnalistik</h4>
+            <span id="feedback-tone-badge" class="text-[10px] bg-indigo-900/80 text-indigo-200 px-2 py-0.5 rounded border border-indigo-700">Analisis Dampak Bahasa</span>
+          </div>
+        </div>
+        <p id="socratic-feedback" class="text-sm text-indigo-100 leading-relaxed font-normal">
+          "Pilihan sudut pandangmu mengutamakan solusi dan empati. Perhatikan bagaimana kata-kata positif membuat pembaca merasa tenang alih-alih panik. Apakah kamu sudah memeriksa apakah ada fakta yang terdistorsi?"
+        </p>
+      </div>
+
+      <!-- SIMULASI KOLOM KOMENTAR WARGA SEKOLAH (HASIL DARI PILIHAN BAHASA) -->
+      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+            <span>ðŸ’¬ Simulasi Reaksi Pembaca Warga Sekolah</span>
+          </h3>
+          <span id="comment-count" class="text-[10px] font-bold text-slate-400">3 Tanggapan</span>
+        </div>
+
+        <div id="comments-container" class="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+          <!-- Komentar diisi dinamis sesuai pilihan kata -->
+        </div>
+      </div>
+
+      <!-- CERMIN PERSPEKTIF MULTI-STAKEHOLDER (THE AUDIENCE MIRROR) -->
+      <div class="bg-slate-50 rounded-3xl p-5 border border-slate-200/90 flex flex-col gap-3">
+        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Lensa 3 Sudut Pandang Pembaca:</h4>
+        
+        <!-- Guru / Pihak Sekolah -->
+        <div class="p-2.5 rounded-xl bg-white border border-slate-200 text-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-800">ðŸ‘¨â€ðŸ« Sudut Pandang Kepala Sekolah:</span>
+            <span id="eval-kepsek" class="font-bold text-emerald-600">Sangat Positif</span>
+          </div>
+          <p id="desc-kepsek" class="text-[11px] text-slate-500">"Pemberitaan yang menenangkan dan mendidik murid tentang kerja sama."</p>
+        </div>
+
+        <!-- Teman Sebaya / Siswa Lain -->
+        <div class="p-2.5 rounded-xl bg-white border border-slate-200 text-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-800">ðŸ§‘â€ðŸŽ“ Sudut Pandang Siswa:</span>
+            <span id="eval-siswa" class="font-bold text-indigo-600">Apresiatif</span>
+          </div>
+          <p id="desc-siswa" class="text-[11px] text-slate-500">"Senang melihat teman OSIS dihargai kerja kerasnya."</p>
+        </div>
+
+        <!-- Pengelola Kantin -->
+        <div class="p-2.5 rounded-xl bg-white border border-slate-200 text-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-800">ðŸ¥£ Pengelola Kantin:</span>
+            <span id="eval-kantin" class="font-bold text-emerald-600">Merasa Terlindungi</span>
+          </div>
+          <p id="desc-kantin" class="text-[11px] text-slate-500">"Terima kasih tidak menuduh kami sengaja memperlambat pelayanan."</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    // State Redaksional
+    const state = {
+      framing: 'solutif', // solutif | krisis | kambinghitam
+      headlineIndex: 0,
+      conclusion: 'reflektif' // reflektif | provokatif
+    };
+
+    // Bank Pilihan Diksi Berdasarkan Framing
+    const editorialData = {
+      solutif: {
+        headlines: [
+          { text: "Mesin Kasir Ngadat, Kekompakan OSIS dan Kantin Selamatkan Makan Siang Siswa", tone: "empati" },
+          { text: "Tetap Tertib Saat Mesin Kasir E-Kantin Sekolah Alami Kendala Singkat", tone: "santun" }
+        ],
+        lead: "Kendala teknis pada mesin kasir digital di kantin sekolah sempat menimbulkan antrean panjang pagi ini. Namun, berkat kesigapan pengurus OSIS dan pengelola kantin yang sigap beralih ke pencatatan manual, ratusan siswa tetap terlayani secara tertib dan kondusif.",
+        quote: "\"Alhamdulillah, semua saling bantu. Kami hanya ingin teman-teman tidak terlambat masuk kelas,\" ujar perwakilan OSIS.",
+        statusTag: "Laras Berita Solutif & Beradab",
+        sentiment: "Sejuk & Bersyukur",
+        emoji: "ðŸ¤",
+        comments: [
+          { author: "Ust. Rahmat (Waka Kesiswaan)", text: "Maa syaa Allah, bangga melihat respon cepat ananda OSIS dan kesabaran para siswa.", time: "2 mnt lalu", mood: "proud" },
+          { author: "Zaidan (Kelas 8B)", text: "Tadi sempat khawatir telat, tapi kakak kelas cepat banget nulis nota manualnya. Mantap!", time: "4 mnt lalu", mood: "happy" },
+          { author: "Ibu Nur (Pengelola Kantin)", text: "Jazakumullah khairan ananda sekalian, mohon maaf atas kendala mesin tadi.", time: "5 mnt lalu", mood: "grateful" }
+        ],
+        evaluations: {
+          kepsek: { status: "Sangat Positif", color: "text-emerald-600", desc: "Pemberitaan yang menenangkan, berimbang, dan mengedukasi tentang adab kerja sama." },
+          siswa: { status: "Apresiatif & Tenang", color: "text-indigo-600", desc: "Siswa merasa terbantu dan menghargai kesigapan teman-temannya." },
+          kantin: { status: "Merasa Dihargai", color: "text-emerald-600", desc: "Kantin merasa tidak dipojokkan dan berkomitmen memperbaiki layanan." }
+        },
+        feedback: "Keputusan redaksimu sangat bijak. Dengan memilih sudut pandang 'solutif', berita tetap menyampaikan fakta bahwa mesin mati, tetapi fokus pada bagaimana manusia saling menolong menyelesaikannya. Ini adalah adab komunikasi tertinggi!"
+      },
+      krisis: {
+        headlines: [
+          { text: "Kantin Sekolah Chaos! Siswa Terjebak Antrean Raksasa Akibat Mesin Mati", tone: "sensasional" },
+          { text: "Petaka Jam Istirahat: Ratusan Murid Kelaparan di Depan Kasir Kantin!", tone: "panik" }
+        ],
+        lead: "Suasana kantin sekolah mendadak gaduh dan kacau balau pada Senin pagi ini. Kerusakan sistem kasir digital membuat siswa berdesak-desakan panik berebut antrean makan siang sebelum bel masuk berbunyi.",
+        quote: "\"Situasinya ricuh dan sesak sekali, kami hampir tidak sempat makan!\" keluh seorang siswa yang panik.",
+        statusTag: "Laras Sensasional (Clickbait)",
+        sentiment: "Panik & Resah",
+        emoji: "âš ï¸",
+        comments: [
+          { author: "Wali Murid (Grup Paguyuban)", text: "Loh kok bisa sampai ricuh begitu? Mohon pihak sekolah segera evaluasi vendor kantin!", time: "1 mnt lalu", mood: "angry" },
+          { author: "Haikal (Kelas 7C)", text: "Padahal tadi biasa aja sih, antre sebentar terus dibagiin. Kok beritanya ngeri banget?", time: "3 mnt lalu", mood: "confused" },
+          { author: "Faris (Kelas 9A)", text: "Waduh heboh banget bahasanya kayak perang dunia, padahal cuma 15 menit.", time: "6 mnt lalu", mood: "skeptical" }
+        ],
+        evaluations: {
+          kepsek: { status: "Terganggu & Kecewa", color: "text-rose-600", desc: "Berita memicu keresahan wali murid padahal kenyataan di lapangan terkendali." },
+          siswa: { status: "Terpecah & Drama", color: "text-amber-600", desc: "Sebagian panik, sebagian merasa jurnalis sekolah melebih-lebihkan fakta." },
+          kantin: { status: "Tertekan & Terintimidasi", color: "text-rose-600", desc: "Pihak kantin merasa difitnah karena dikabarkan membiarkan anak kelaparan." }
+        },
+        feedback: "Perhatikan reaksinya: Headline 'Kantin Chaos' memang cepat dibaca orang (tinggi daya klik), tetapi efek sampingnya buruk. Wali murid menjadi resah dan pembaca merasa dibodohi karena faktanya tidak semencekam itu. Kata-katamu telah menciptakan kepanikan buatan."
+      },
+      kambinghitam: {
+        headlines: [
+          { text: "Mesin Kasir Rusak Lagi: Siapa yang Bertanggung Jawab Atas Penderitaan Siswa?", tone: "blaming" },
+          { text: "Kinerja Pengelola Kantin Disorot Tajam Usai Bikin Antrean Mengular", tone: "menuduh" }
+        ],
+        lead: "Kelalaian teknis kembali mencoreng kenyamanan kantin sekolah. Rusaknya mesin kasir digital diduga akibat minimnya kesiapan pengelola dalam mengantisipasi jam sibuk, menyisakan kekecewaan mendalam bagi para murid.",
+        quote: "\"Kalau memang tidak siap dengan sistem digital, jangan paksakan murid menanggung akibatnya,\" tegas salah satu pengamat.",
+        statusTag: "Laras Menyerang & Menghakimi",
+        sentiment: "Kemarahan & Polemik",
+        emoji: "ðŸ”¥",
+        comments: [
+          { author: "Bima (Kelas 8D)", text: "Bener nih! Kantin harusnya tahu diri, masa alat penting nggak dirawat!", time: "1 mnt lalu", mood: "angry" },
+          { author: "Ibu Nur (Pengelola Kantin)", text: "Astaghfirullah nak, ini murni mati listrik sesaat dan kami langsung catat manual...", time: "2 mnt lalu", mood: "sad" },
+          { author: "Ketua OSIS", text: "Mohon izin redaksi, tadi pengelola kantin sangat kooperatif bantu kami. Tolong jangan sepihak beritanya.", time: "4 mnt lalu", mood: "rebuttal" }
+        ],
+        evaluations: {
+          kepsek: { status: "Teguran Keras Redaksi", color: "text-rose-700", desc: "Jurnalisme tidak berimbang (*cover both sides*) dan melanggar kode etik kesantunan." },
+          siswa: { status: "Saling Menghujat", color: "text-rose-600", desc: "Muncul saling tuduh antar-warga sekolah di kolom obrolan." },
+          kantin: { status: "Sakit Hati & Sedih", color: "text-rose-700", desc: "Kantin merasa kerja kerasnya diabaikan dan nama baiknya dirusak." }
+        },
+        feedback: "Lihat kolom komentar! Berita yang bernada 'menghakimi' langsung memicu pertikaian dan menyakiti hati pengelola kantin yang sebenarnya sudah berusaha maksimal. Dalam bahasa, menghakimi sebelum tabayyun (klarifikasi) adalah bahaya besar."
+      }
+    };
+
+    function setFraming(frameKey) {
+      state.framing = frameKey;
+      state.headlineIndex = 0;
+      
+      // Update styling tombol framing
+      ['krisis', 'solutif', 'kambinghitam'].forEach(k => {
+        const btn = document.getElementById(`btn-frame-${k}`);
+        if (k === frameKey) {
+          btn.className = "p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-left transition-all shadow-xs";
+          btn.querySelector('span:first-child').className = "block text-xs font-bold text-indigo-950";
+        } else {
+          btn.className = "p-3 rounded-2xl border-2 border-slate-200 text-left hover:border-slate-300 transition-all";
+          btn.querySelector('span:first-child').className = "block text-xs font-bold text-slate-800";
+        }
+      });
+
+      renderHeadlineOptions();
+      updateArticle();
+    }
+
+    function setConclusion(concKey) {
+      state.conclusion = concKey;
+      const btnRef = document.getElementById('btn-conc-reflektif');
+      const btnPro = document.getElementById('btn-conc-provokatif');
+      if (concKey === 'reflektif') {
+        btnRef.className = "p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-left text-xs font-semibold text-indigo-950 shadow-xs";
+        btnPro.className = "p-2.5 rounded-xl border-2 border-slate-200 text-left text-xs font-semibold text-slate-700 hover:border-slate-300";
+      } else {
+        btnPro.className = "p-2.5 rounded-xl border-2 border-rose-600 bg-rose-50/70 text-left text-xs font-semibold text-rose-950 shadow-xs";
+        btnRef.className = "p-2.5 rounded-xl border-2 border-slate-200 text-left text-xs font-semibold text-slate-700 hover:border-slate-300";
+      }
+      updateArticle();
+    }
+
+    function renderHeadlineOptions() {
+      const select = document.getElementById('select-headline');
+      select.innerHTML = '';
+      editorialData[state.framing].headlines.forEach((item, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${idx + 1}. [${item.tone.toUpperCase()}] ${item.text}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function updateArticle() {
+      const selIdx = parseInt(document.getElementById('select-headline').value || 0);
+      state.headlineIndex = selIdx;
+      const data = editorialData[state.framing];
+      const curHeadline = data.headlines[state.headlineIndex];
+
+      // Update Preview Berita
+      document.getElementById('preview-headline').textContent = curHeadline.text;
+      document.getElementById('preview-lead').textContent = data.lead;
+      document.getElementById('preview-quote').textContent = data.quote;
+      document.getElementById('preview-tag').textContent = data.statusTag;
+
+      if (state.conclusion === 'reflektif') {
+        document.getElementById('preview-closing').textContent = 
+          "Peristiwa ini membuktikan bahwa kendala teknis dapat diselesaikan dengan adab saling memahami, kerja sama, dan komunikasi yang tenang.";
+      } else {
+        document.getElementById('preview-closing').textContent = 
+          "Jika kejadian seperti ini terus dibiarkan, bukan mustahil gelombang protes murid akan semakin meluas pada hari-hari mendatang!";
+      }
+
+      // Visual Header Koran berubah warna sesuai laras bahasa
+      const tagEl = document.getElementById('preview-tag');
+      if (state.framing === 'solutif') tagEl.className = "px-2 py-0.5 rounded-sm bg-emerald-50 text-emerald-800 font-bold uppercase tracking-wide text-[9px]";
+      else if (state.framing === 'krisis') tagEl.className = "px-2 py-0.5 rounded-sm bg-amber-50 text-amber-800 font-bold uppercase tracking-wide text-[9px]";
+      else tagEl.className = "px-2 py-0.5 rounded-sm bg-rose-50 text-rose-800 font-bold uppercase tracking-wide text-[9px]";
+
+      // Render Otomatis Respon & Analisis
+      publishArticle();
+    }
+
+    function publishArticle() {
+      const data = editorialData[state.framing];
+
+      // Update Telemetry Header
+      document.getElementById('sentiment-summary').textContent = data.sentiment;
+      document.getElementById('sentiment-indicator').textContent = data.emoji;
+
+      // Update Feedback Sokratik
+      let finalFeedback = data.feedback;
+      if (state.conclusion === 'provokatif' && state.framing === 'solutif') {
+        finalFeedback += " Catatan: Awal berita Anda sudah sangat santun, namun kalimat penutup yang provokatif merusak ketenangan pembaca di akhir paragraf.";
+      }
+      document.getElementById('socratic-feedback').innerHTML = `"${finalFeedback}"`;
+
+      // Update Komentar Warga Sekolah
+      const container = document.getElementById('comments-container');
+      container.innerHTML = '';
+      data.comments.forEach((c, i) => {
+        const div = document.createElement('div');
+        div.className = "p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs comment-enter";
+        div.style.animationDelay = `${i * 120}ms`;
+        div.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-800">${c.author}</span>
+            <span class="text-[10px] text-slate-400">${c.time}</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed font-normal">${c.text}</p>
+        `;
+        container.appendChild(div);
+      });
+
+      // Update 3 Lensa Pembaca
+      const ev = data.evaluations;
+      document.getElementById('eval-kepsek').textContent = ev.kepsek.status;
+      document.getElementById('eval-kepsek').className = `font-bold ${ev.kepsek.color}`;
+      document.getElementById('desc-kepsek').textContent = ev.kepsek.desc;
+
+      document.getElementById('eval-siswa').textContent = ev.siswa.status;
+      document.getElementById('eval-siswa').className = `font-bold ${ev.siswa.color}`;
+      document.getElementById('desc-siswa').textContent = ev.siswa.desc;
+
+      document.getElementById('eval-kantin').textContent = ev.kantin.status;
+      document.getElementById('eval-kantin').className = `font-bold ${ev.kantin.color}`;
+      document.getElementById('desc-kantin').textContent = ev.kantin.desc;
+    }
+
+    // Inisialisasi awal
+    window.addEventListener('DOMContentLoaded', () => {
+      renderHeadlineOptions();
+      updateArticle();
+    });
+  </script>
+</body>
+</html>
