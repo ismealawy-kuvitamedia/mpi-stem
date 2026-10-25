@@ -3,421 +3,547 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio Kreatif Iklan, Slogan & Poster - Fase D SMP</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Laboratorium Simulasi Energi Nusantara - MPI Interaktif TPACK</title>
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Plus Jakarta Sans / Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            eco: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857'
+            },
+            tech: {
+              50: '#f0f9ff',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              900: '#0c4a6e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Animasi Putaran Kincir Angin yang Variatif via Variabel CSS */
+    @keyframes spinWindmill {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
-    .font-arabic-accent {
-      font-family: 'Amiri', serif;
+    .wind-blade {
+      transform-origin: 300px 145px;
+      animation: spinWindmill var(--wind-speed, 3s) linear infinite;
     }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    .wind-blade-small {
+      transform-origin: 360px 165px;
+      animation: spinWindmill calc(var(--wind-speed, 3s) * 0.8) linear infinite;
     }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
+
+    /* Animasi Air Bendungan */
+    @keyframes waterFlow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 40; }
     }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
+    .water-stream {
+      stroke-dasharray: 6, 6;
+      animation: waterFlow 0.8s linear infinite;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+
+    /* Animasi Asap Pembangkit Fosil */
+    @keyframes smokeDrift {
+      0% { opacity: 0.2; transform: translateY(0) scale(0.9); }
+      50% { opacity: 0.85; transform: translateY(-14px) scale(1.15) translateX(6px); }
+      100% { opacity: 0; transform: translateY(-28px) scale(1.35) translateX(12px); }
     }
-    /* Animation Keyframes */
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(2deg); }
+    .smoke-puff-1 { animation: smokeDrift 2.2s infinite ease-out; }
+    .smoke-puff-2 { animation: smokeDrift 2.6s 0.8s infinite ease-out; }
+
+    /* Efek Pulse & Hover Halus */
+    .glow-pulse {
+      animation: pulseGlow 2s infinite ease-in-out;
     }
     @keyframes pulseGlow {
-      0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
-      50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.7)); }
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4)); }
+      50% { filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.85)); }
     }
-    .animate-float {
-      animation: floatSlow 4s ease-in-out infinite;
+    .night-sky {
+      background: linear-gradient(180deg, #090d16 0%, #172554 60%, #1e3a8a 100%);
     }
-    .animate-glow {
-      animation: pulseGlow 2.5s ease-in-out infinite;
+    .day-sky {
+      background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 65%, #f0fdf4 100%);
     }
-    .transition-all-smooth {
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    .polluted-sky {
+      background: linear-gradient(180deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%) !important;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-  <!-- ==================== ZONA ATAS: HUD / TELEMETRY BAR ==================== -->
-  <header class="bg-white/95 backdrop-blur border-b border-emerald-100 sticky top-0 z-40 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <!-- Brand & Context Identitas -->
-        <div class="flex items-center space-x-3">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top App Navigation & Master Status Bar -->
+  <header class="bg-white/95 backdrop-blur sticky top-0 z-30 border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Modul Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-sky-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 font-bold text-lg">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              TPACK Inkuiri Digital
+            </span>
+            <span class="text-xs text-slate-500 hidden sm:inline">Kurikulum Merdeka • IPAS Kelas 5-8</span>
           </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-md">Bahasa Indonesia Fase D</span>
-              <span class="px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded-md">Kelas VIII SMP</span>
-            </div>
-            <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Studio Retorika Persuasif: Iklan, Slogan & Poster</h1>
-          </div>
+          <h1 class="font-display font-bold text-base sm:text-lg text-slate-900 tracking-tight">
+            Laboratorium Pintar Energi Nusantara
+          </h1>
+        </div>
+      </div>
+
+      <!-- Live Mission Status Dashboard -->
+      <div class="flex items-center flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm">
+        
+        <!-- Toggle Siang / Malam -->
+        <button id="timeToggleBtn" onclick="toggleTimeOfDay()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 transition font-medium text-slate-700">
+          <span id="timeIcon">☀️</span>
+          <span id="timeLabel">Siang Terang</span>
+        </button>
+
+        <!-- Indikator Total Daya -->
+        <div class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center gap-2">
+          <span class="text-slate-500">Pasokan:</span>
+          <span id="totalPowerDisplay" class="font-mono font-bold text-emerald-600 text-sm sm:text-base">0 kW</span>
+          <span class="text-slate-400">/ 500 kW</span>
         </div>
 
-        <!-- Telemetry Metrics Engine -->
-        <div class="flex items-center gap-3 sm:gap-6 bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-2xl">
-          <!-- Skor Daya Pikat (Attractiveness) -->
-          <div class="text-center">
-            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Daya Pikat</p>
-            <div class="flex items-center justify-center gap-1">
-              <span id="metric-hook" class="text-lg font-extrabold text-slate-800">45</span>
-              <span class="text-xs text-slate-400">/100</span>
-            </div>
-          </div>
-          <div class="h-8 w-px bg-slate-200"></div>
-          <!-- Skor Kepercayaan & Etika (Amanah/Honesty) -->
-          <div class="text-center">
-            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Nilai Amanah</p>
-            <div class="flex items-center justify-center gap-1">
-              <span id="metric-ethics" class="text-lg font-extrabold text-emerald-600">80</span>
-              <span class="text-xs text-slate-400">/100</span>
-            </div>
-          </div>
-          <div class="h-8 w-px bg-slate-200"></div>
-          <!-- Estimasi Closing Rate (High Value Conversion) -->
-          <div class="text-center">
-            <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Potensi Closing</p>
-            <div class="flex items-center justify-center gap-1">
-              <span id="metric-closing" class="text-lg font-extrabold text-teal-600">32%</span>
-            </div>
-          </div>
-
-          <!-- Tombol Teori & Anatomis Modal -->
-          <button onclick="toggleModal('modal-anatomi')" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-            <span class="hidden sm:inline">Anatomi Konsep</span>
-          </button>
+        <!-- Indikator Kualitas Udara (AQI) -->
+        <div class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 flex items-center gap-2">
+          <span class="text-slate-500">Emisi:</span>
+          <span id="aqiBadge" class="px-2 py-0.5 rounded-md font-semibold text-xs bg-emerald-100 text-emerald-800">
+            0% Bersih
+          </span>
         </div>
+
+        <!-- Indikator Keadaan Kota -->
+        <div id="cityStatusBadge" class="px-3 py-1.5 rounded-lg font-bold text-xs bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+          Kota Padam
+        </div>
+
       </div>
     </div>
   </header>
 
-  <!-- ==================== MAIN WORKSPACE ==================== -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  <!-- Main Workspace Layout -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-5 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5">
     
-    <!-- KOLOM KIRI & TENGAH: KANVAS VISUAL REAKTIF (7 Kolom) -->
-    <section class="lg:col-span-7 flex flex-col gap-5">
+    <!-- LEFT & CENTER: Visual Simulation Canvas & Non-Linear Explorer (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
       
-      <!-- Studio Canvas Showcase -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm relative overflow-hidden">
+      <!-- Interactive SVG City Canvas Container -->
+      <div class="relative rounded-2xl overflow-hidden border border-slate-300/80 shadow-lg transition-all duration-700 bg-sky-200" id="skyBackground">
         
-        <!-- Tab Mode Tampilan Media -->
-        <div class="flex flex-wrap items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-2">
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Format Uji Tayang:</span>
-            <div class="inline-flex p-1 bg-slate-100 rounded-xl" role="tablist">
-              <button onclick="setMediaType('poster')" id="tab-poster" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-emerald-800 shadow-xs transition-all">Poster Fisik</button>
-              <button onclick="setMediaType('iklan')" id="tab-iklan" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all">Iklan Digital Feed</button>
-              <button onclick="setMediaType('slogan')" id="tab-slogan" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all">Banner Slogan</button>
-            </div>
+        <!-- Weather & Environment Controls Quick Ribbon -->
+        <div class="absolute top-3 left-3 z-10 flex gap-2">
+          <div class="px-2.5 py-1 rounded-md bg-white/80 backdrop-blur text-[11px] font-semibold text-slate-700 shadow-xs flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+            Simulasi Real-time
           </div>
-          
-          <div class="flex items-center gap-2">
-            <span id="badge-produk" class="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">Produk: Madu Al-Barokah</span>
+          <div id="solarConditionTag" class="px-2.5 py-1 rounded-md bg-amber-100/90 text-amber-900 text-[11px] font-bold shadow-xs flex items-center gap-1">
+            ☀️ Foton Maksimal (100%)
           </div>
         </div>
 
-        <!-- Kanvas SVG Interaktif Dinamis -->
-        <div class="relative w-full aspect-[4/5] sm:aspect-[4/3.8] bg-slate-900 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center p-3 sm:p-6 select-none">
-          
-          <!-- Latar Belakang & Efek Simulasi -->
-          <div id="canvas-glow" class="absolute inset-0 bg-gradient-to-tr from-emerald-950 via-slate-900 to-amber-950/40 opacity-70 transition-all duration-500"></div>
-          
-          <!-- Mockup Layar Poster/Iklan Utama (SVG Scalable) -->
-          <svg id="svg-canvas" class="relative z-10 w-full h-full max-h-[520px] transition-all-smooth" viewBox="0 0 600 750" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="grad-bg-poster" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop id="bg-stop-1" offset="0%" stop-color="#064e3b" />
-                <stop id="bg-stop-2" offset="100%" stop-color="#022c22" />
-              </linearGradient>
-              <linearGradient id="grad-gold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#fde68a" />
-                <stop offset="100%" stop-color="#d97706" />
-              </linearGradient>
-              <filter id="shadow-poster" x="-10%" y="-10%" width="120%" height="120%">
-                <feDropShadow dx="0" dy="16" stdDeviation="16" flood-opacity="0.35"/>
-              </filter>
-            </defs>
+        <!-- Reset Button -->
+        <button onclick="resetSimulation()" class="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-md bg-white/80 hover:bg-white text-slate-700 text-[11px] font-semibold shadow-xs border border-slate-200 transition">
+          ↺ Reset Variabel
+        </button>
 
-            <!-- Card Board Poster/Iklan -->
-            <rect id="card-rect" x="30" y="25" width="540" height="700" rx="28" fill="url(#grad-bg-poster)" stroke="#10b981" stroke-width="3" filter="url(#shadow-poster)" />
+        <!-- SVG Visual Canvas -->
+        <svg viewBox="0 0 800 450" class="w-full h-auto block select-none" id="simSvg">
+          <defs>
+            <!-- Gradient Gradasi Pegunungan -->
+            <linearGradient id="mountainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#4ade80" />
+              <stop offset="100%" stop-color="#15803d" />
+            </linearGradient>
+
+            <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0284c7" />
+            </linearGradient>
+
+            <!-- Glow Filter untuk Lampu Kota -->
+            <filter id="yellowGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <!-- SUN / MOON CELESTIAL BODY -->
+          <g id="celestialBody" transform="translate(100, 80)" class="transition-transform duration-700">
+            <!-- Sun Rays & Core -->
+            <circle id="sunCore" r="30" fill="#facc15" filter="drop-shadow(0px 0px 16px #f59e0b)" />
+            <!-- Moon Shadow for Night Mode -->
+            <circle id="moonDetail" cx="10" cy="-6" r="26" fill="#1e293b" opacity="0" class="transition-opacity duration-700" />
+          </g>
+
+          <!-- Cloud Layers -->
+          <g id="cloudLayer" fill="#ffffff" opacity="0.85">
+            <path d="M190 90 a18 18 0 0 1 32 -6 a24 24 0 0 1 42 8 a16 16 0 0 1 20 18 h-94 z" />
+            <path d="M540 70 a15 15 0 0 1 28 -5 a20 20 0 0 1 36 6 a14 14 0 0 1 18 15 h-82 z" opacity="0.75" />
+          </g>
+
+          <!-- Birds Flying (Hanya muncul jika emisi rendah) -->
+          <g id="birdsCleanAir" stroke="#334155" stroke-width="2" fill="none" opacity="1" class="transition-opacity duration-500">
+            <path d="M220,130 Q225,122 230,130 Q235,122 240,130" />
+            <path d="M245,142 Q250,135 255,142 Q260,135 265,142" />
+          </g>
+
+          <!-- Latar Belakang Pegunungan & Geotermal -->
+          <polygon points="0,320 150,180 320,320" fill="url(#mountainGrad)" opacity="0.9" />
+          <polygon points="180,320 380,160 560,320" fill="#16a34a" opacity="0.8" />
+          
+          <!-- PLTA & Reservoir Air di Lereng Gunung -->
+          <polygon points="0,290 120,290 140,380 0,390" fill="#0369a1" />
+          <!-- Aliran Turbin Air -->
+          <path d="M90 295 L110 380" stroke="#bae6fd" stroke-width="8" stroke-linecap="round" class="water-stream" id="hydroWaterStream" />
+          <!-- Rumah Turbin PLTA -->
+          <rect x="95" y="360" width="36" height="30" rx="3" fill="#334155" />
+          <circle cx="113" cy="375" r="7" fill="#0284c7" />
+          <text x="113" y="378" font-size="8" fill="#ffffff" text-anchor="middle" font-weight="bold">PLTA</text>
+
+          <!-- Perbukitan Depan -->
+          <path d="M0,350 Q240,310 460,360 T800,340 L800,450 L0,450 Z" fill="#22c55e" />
+
+          <!-- PLTB (Kincir Angin Turbin Raksasa 1) -->
+          <g id="windTurbine1">
+            <!-- Menara Tiang -->
+            <polygon points="297,145 303,145 305,330 295,330" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+            <!-- Rotor Box -->
+            <circle cx="300" cy="145" r="6" fill="#64748b" />
+            <!-- 3 Baling-baling berputar -->
+            <g class="wind-blade">
+              <path d="M300,145 L296,80 Q300,75 304,80 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <path d="M300,145 L356,177 Q360,182 352,185 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <path d="M300,145 L248,187 Q242,185 244,178 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+            </g>
+          </g>
+
+          <!-- Turbin Angin Kecil 2 -->
+          <g id="windTurbine2">
+            <polygon points="358,165 362,165 364,320 356,320" fill="#e2e8f0" stroke="#94a3b8" />
+            <circle cx="360" cy="165" r="5" fill="#64748b" />
+            <g class="wind-blade-small">
+              <path d="M360,165 L357,110 Q360,105 363,110 Z" fill="#ffffff" stroke="#cbd5e1" />
+              <path d="M360,165 L405,190 Q408,194 402,197 Z" fill="#ffffff" stroke="#cbd5e1" />
+              <path d="M360,165 L317,198 Q312,196 314,191 Z" fill="#ffffff" stroke="#cbd5e1" />
+            </g>
+          </g>
+
+          <!-- Hamparan Panel Surya (Solar Farm) -->
+          <g id="solarFarmGroup" transform="translate(160, 340)">
+            <!-- Panel 1 -->
+            <polygon points="10,25 35,5 65,5 40,25" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" id="pvCell1" />
+            <line x1="22" y1="15" x2="52" y2="15" stroke="#93c5fd" stroke-width="0.75" />
+            <!-- Panel 2 -->
+            <polygon points="45,25 70,5 100,5 75,25" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" id="pvCell2" />
+            <line x1="57" y1="15" x2="87" y2="15" stroke="#93c5fd" stroke-width="0.75" />
+            <!-- Panel 3 -->
+            <polygon points="80,25 105,5 135,5 110,25" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" id="pvCell3" />
+            <line x1="92" y1="15" x2="122" y2="15" stroke="#93c5fd" stroke-width="0.75" />
+            <text x="70" y="36" font-size="9" fill="#14532d" font-weight="bold" text-anchor="middle">Ladang PLTS</text>
+          </g>
+
+          <!-- PABRIK FOSIL CADANGAN (Bisa diaktifkan untuk perbandingan) -->
+          <g id="fossilPlantVisual" opacity="0.15" class="transition-opacity duration-500">
+            <!-- Bangunan Cerobong Asap -->
+            <rect x="710" y="270" width="60" height="70" fill="#475569" rx="2" />
+            <polygon points="720,270 725,210 735,210 738,270" fill="#334155" />
+            <polygon points="745,270 750,195 762,195 765,270" fill="#334155" />
             
-            <!-- Ornamen Geometris Kaligrafi Halus (Islamic Subtle Geometric Pattern) -->
-            <g id="ornament-pattern" opacity="0.12" stroke="#ffffff" stroke-width="1.2">
-              <circle cx="300" cy="375" r="220" />
-              <polygon points="300,165 448,227 510,375 448,523 300,585 152,523 90,375 152,227" fill="none" />
-              <polygon points="300,195 427,248 480,375 427,502 300,555 173,502 120,375 173,248" fill="none" />
+            <!-- Kepulan Asap Fosil -->
+            <g id="smokePuffs" opacity="0">
+              <circle cx="730" cy="195" r="14" fill="#475569" class="smoke-puff-1" />
+              <circle cx="756" cy="180" r="18" fill="#334155" class="smoke-puff-2" />
+              <circle cx="740" cy="160" r="24" fill="#64748b" opacity="0.6" class="smoke-puff-1" />
+            </g>
+            <text x="740" y="330" font-size="8" fill="#f8fafc" text-anchor="middle" font-weight="bold">PLTU Darurat</text>
+          </g>
+
+          <!-- LANSKAP KOTA NUSANTARA (Gedung Sekolah, RS, & Rumah) -->
+          <g id="smartCityBuildings" transform="translate(420, 260)">
+            
+            <!-- RS Sehat Ceria (Fasilitas Vital) -->
+            <rect x="0" y="40" width="85" height="75" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" rx="3" />
+            <!-- Simbol Palang Merah -->
+            <rect x="36" y="48" width="12" height="4" fill="#ef4444" />
+            <rect x="40" y="44" width="4" height="12" fill="#ef4444" />
+            <text x="42" y="70" font-size="7" fill="#475569" text-anchor="middle" font-weight="bold">Rumah Sakit</text>
+            <!-- Jendela RS (Menyala kuning saat ada listrik) -->
+            <g class="city-window-glow" fill="#334155">
+              <rect x="12" y="76" width="16" height="12" rx="1" id="winHosp1" />
+              <rect x="35" y="76" width="16" height="12" rx="1" id="winHosp2" />
+              <rect x="58" y="76" width="16" height="12" rx="1" id="winHosp3" />
             </g>
 
-            <!-- Header Badge (Kategori / Motto Bernilai) -->
-            <g id="group-badge" transform="translate(300, 75)">
-              <rect id="badge-bg" x="-110" y="-18" width="220" height="36" rx="18" fill="#10b981" opacity="0.25" stroke="#34d399" stroke-width="1.5" />
-              <text id="badge-text" x="0" y="5" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="700" letter-spacing="1.5">100% AMANAH & MURNI</text>
+            <!-- Gedung Sekolah Digital Masa Depan -->
+            <rect x="95" y="15" width="115" height="100" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" rx="4" />
+            <polygon points="90,18 152,-10 215,18" fill="#0284c7" />
+            <text x="152" y="24" font-size="9" fill="#ffffff" text-anchor="middle" font-weight="bold">Sekolah Nusantara</text>
+            <!-- Panel Surya Atap Sekolah -->
+            <line x1="110" y1="6" x2="195" y2="6" stroke="#38bdf8" stroke-width="3" />
+
+            <!-- Jendela-Jendela Sekolah -->
+            <g class="city-window-glow" fill="#334155">
+              <rect x="110" y="35" width="18" height="16" rx="2" id="winSch1" />
+              <rect x="142" y="35" width="18" height="16" rx="2" id="winSch2" />
+              <rect x="174" y="35" width="18" height="16" rx="2" id="winSch3" />
+              <rect x="110" y="65" width="18" height="16" rx="2" id="winSch4" />
+              <rect x="142" y="65" width="18" height="16" rx="2" id="winSch5" />
+              <rect x="174" y="65" width="18" height="16" rx="2" id="winSch6" />
             </g>
 
-            <!-- Headline / Slogan Utama (Hook) -->
-            <text id="canvas-headline" x="300" y="145" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="800" font-family="'Plus Jakarta Sans', sans-serif">
-              TETAP FIT DI BULAN MULIA
-            </text>
-            <text id="canvas-subheadline" x="300" y="178" text-anchor="middle" fill="#6ee7b7" font-size="15" font-weight="600">
-              Energi Ibadah Tanpa Khawatir Letih
-            </text>
+            <!-- Rumah-Rumah Pintar -->
+            <polygon points="220,70 245,50 270,70" fill="#e11d48" />
+            <rect x="225" y="70" width="40" height="45" fill="#ffedd5" stroke="#fdba74" rx="2" />
+            <rect x="236" y="82" width="16" height="16" rx="2" fill="#334155" id="winHouse1" />
 
-            <!-- Visual Sentral Maskot / Ilustrasi Produk (Reaktif SVG) -->
-            <g id="product-art" transform="translate(300, 340)">
-              <!-- Lingkaran Aura Cahaya -->
-              <circle id="art-aura" cx="0" cy="0" r="125" fill="#f59e0b" opacity="0.15" />
-              <circle cx="0" cy="0" r="100" fill="#10b981" opacity="0.1" stroke="#34d399" stroke-dasharray="6 6" />
-
-              <!-- Ilustrasi Botol Madu / Simbol Keberkahan -->
-              <g id="illustration-honey" class="transition-all duration-300">
-                <!-- Tubuh Botol Kaca -->
-                <rect x="-45" y="-60" width="90" height="135" rx="22" fill="#ffffff" opacity="0.95" stroke="#f59e0b" stroke-width="4" />
-                <!-- Cairan Madu Emas -->
-                <path id="liquid-fill" d="M -41 0 Q 0 -10 41 0 L 41 68 Q 0 76 -41 68 Z" fill="url(#grad-gold)" />
-                <!-- Leher & Tutup Botol Kayu -->
-                <rect x="-24" y="-85" width="48" height="25" rx="6" fill="#78350f" />
-                <rect x="-30" y="-93" width="60" height="12" rx="4" fill="#92400e" stroke="#fcd34d" stroke-width="1.5" />
-                <!-- Label Botol -->
-                <rect x="-34" y="-30" width="68" height="60" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" />
-                <!-- Ikon Lebah Emas Mini -->
-                <circle cx="0" cy="-6" r="10" fill="#f59e0b" />
-                <path d="M-6 -6 Q 0 -14 6 -6 Q 0 2 -6 -6" fill="#ffffff" opacity="0.8"/>
-                <text x="0" y="18" text-anchor="middle" font-size="9" font-weight="800" fill="#065f46">AL-BAROKAH</text>
-              </g>
-
-              <!-- Elemen Apresiasi & Trust Emblems -->
-              <g id="trust-stamp" transform="translate(100, -70)">
-                <circle cx="0" cy="0" r="28" fill="#047857" stroke="#34d399" stroke-width="2"/>
-                <text x="0" y="-4" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff">HALAL</text>
-                <text x="0" y="8" text-anchor="middle" font-size="8" font-weight="600" fill="#a7f3d0">100% ASLI</text>
-              </g>
+            <!-- Lampu Jalan Kota -->
+            <g id="streetLightGroup">
+              <path d="M-15,115 L-15,85 Q-15,75 -5,75" stroke="#64748b" stroke-width="2.5" fill="none" />
+              <circle cx="-5" cy="78" r="4" fill="#cbd5e1" id="streetLampBulb" />
             </g>
+          </g>
 
-            <!-- Value Proposition Statement (Teks Isi / Manfaat Rasional & Emosional) -->
-            <g id="group-body-text" transform="translate(300, 520)">
-              <rect x="-230" y="-32" width="460" height="64" rx="14" fill="#022c22" opacity="0.7" stroke="#059669" stroke-width="1" />
-              <text id="canvas-benefit-1" x="0" y="-8" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="600">
-                ðŸ¯ Madu Randu Murni Langsung dari Peternak Santri
-              </text>
-              <text id="canvas-benefit-2" x="0" y="16" text-anchor="middle" fill="#94a3b8" font-size="12">
-                Tanpa pengawet sintetik. Jaga stamina tahfidz & aktivitas harian.
-              </text>
-            </g>
+          <!-- Jalur Distribusi Listrik (Smart Grid Network) -->
+          <path d="M130,375 Q210,360 300,330 T430,340 T570,340" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4" id="smartGridCable" opacity="0.4" />
+        </svg>
 
-            <!-- Call-To-Action (CTA) High Closing Bar -->
-            <g id="group-cta" transform="translate(300, 630)">
-              <rect id="cta-button-bg" x="-200" y="-28" width="400" height="56" rx="28" fill="#10b981" stroke="#fcd34d" stroke-width="2" class="cursor-pointer hover:opacity-90 transition-all"/>
-              <text id="cta-button-text" x="0" y="7" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="800" letter-spacing="0.5">
-                PESAN SEKARANG VIA KOPERASI âž”
-              </text>
-              <!-- Info batas / urgensi santun -->
-              <text id="cta-urgency" x="0" y="44" text-anchor="middle" fill="#cbd5e1" font-size="11">
-                *Infaq 5% untuk beasiswa yatim dhuafa per botol terjual
-              </text>
-            </g>
-          </svg>
-
-          <!-- Floating Badge Status Skenario -->
-          <div class="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/40 text-xs text-emerald-300">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span id="canvas-status-tag">Status Desain: Persuasif Beretika</span>
+        <!-- Keterangan Status Visual Footer Canvas -->
+        <div class="p-3 bg-white/90 backdrop-blur border-t border-slate-200 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-800">Kondisi Grid:</span>
+            <span id="gridConditionText">Kebutuhan dasar belum terpenuhi (Defisit Daya).</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> PLTS: <b id="statSurya">0 kW</b></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span> PLTB: <b id="statAngin">0 kW</b></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> PLTA: <b id="statAir">0 kW</b></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-600 inline-block"></span> Fosil: <b id="statFosil">0 kW</b></span>
           </div>
         </div>
 
-        <!-- Simulator Interaktif Live Comparison Bar -->
-        <div class="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2 text-slate-600">
-            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span><strong>Uji Realitas:</strong> Bandingkan daya pengaruh teks iklan ini di benak pembeli.</span>
-          </div>
-          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button onclick="applyPreset('lemah')" class="px-2.5 py-1 text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">Preset Hambar</button>
-            <button onclick="applyPreset('overclaim')" class="px-2.5 py-1 text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors">Preset Overclaim/Hoaks</button>
-            <button onclick="applyPreset('berkah')" class="px-2.5 py-1 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors font-bold">Preset Berkah & Closing</button>
-          </div>
-        </div>
       </div>
 
-      <!-- Kotak Dialog Asisten Sokratik "Kalam" -->
-      <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white rounded-3xl p-5 border border-emerald-700/50 shadow-md relative overflow-hidden flex items-start gap-4">
-        <!-- Maskot Kalam (SVG Pen Cendekia) -->
-        <div class="shrink-0 relative">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 to-emerald-400 p-0.5 shadow-lg shadow-emerald-500/30 animate-float">
-            <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden">
-              <svg class="w-9 h-9" viewBox="0 0 64 64" fill="none">
-                <!-- Tubuh Pena Kaligrafi -->
-                <path d="M32 6 L44 26 L36 54 L32 58 L28 54 L20 26 Z" fill="#f59e0b" stroke="#fef08a" stroke-width="1.5"/>
-                <!-- Mata Pena Perak -->
-                <path d="M28 54 L32 58 L36 54 L33 46 L31 46 Z" fill="#ffffff" />
-                <line x1="32" y1="46" x2="32" y2="55" stroke="#0f172a" stroke-width="1"/>
-                <!-- Mata Sahabat Ceria -->
-                <circle cx="28" cy="24" r="2.5" fill="#0f172a" />
-                <circle cx="36" cy="24" r="2.5" fill="#0f172a" />
-                <path d="M29 30 Q32 34 35 30" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
-                <!-- Sorot Cahaya Nurani -->
-                <circle cx="42" cy="14" r="3" fill="#34d399" class="animate-glow"/>
-              </svg>
-            </div>
+      <!-- NON-LINEAR EXPLORATION DECK: Kartu Pengetahuan Konseptual (TPACK: Content Knowledge) -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-display font-bold text-slate-900 text-sm sm:text-base flex items-center gap-1.5">
+              <span>📚</span> Modul Eksplorasi Anatomi Konversi Energi
+            </h3>
+            <p class="text-xs text-slate-500">Pilih kartu topik secara mandiri untuk membuka prinsip fisika & teknologi.</p>
           </div>
-          <span class="absolute -bottom-1 -right-1 px-1.5 py-0.2 bg-amber-400 text-slate-950 text-[9px] font-extrabold rounded-md shadow-xs">KALAM</span>
+          <span class="text-[11px] font-semibold text-tech-600 bg-sky-50 px-2 py-1 rounded-md border border-sky-100">
+            Pilar: Non-Linearitas
+          </span>
         </div>
 
-        <div class="flex-1">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-              <span>Refleksi Kalam (Asisten Sokratik)</span>
-              <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            </h4>
-            <span id="kalam-mode-tag" class="text-[10px] text-emerald-200/80 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800">Menilai Kejujuran Teks</span>
-          </div>
-          <p id="kalam-dialogue" class="text-sm text-emerald-50 leading-relaxed font-normal">
-            "Bismillah, perhatikan headline-mu: jika kata-katanya terlalu bombastis seperti 'Pasti Sembuh 100%', apakah pembeli akan percaya, atau justru merasa dibohongi? Coba pilih kata yang menggugah harapan tanpa janji palsu!"
-          </p>
-          <div id="kalam-feedback-chip" class="mt-2.5 flex flex-wrap gap-2">
-            <span class="text-xs bg-emerald-800/60 text-emerald-200 px-2.5 py-1 rounded-lg border border-emerald-700/60 inline-flex items-center gap-1">
-              ðŸ’¡ <em>Tips: Iklan yang baik menyatukan fakta produk dan empati pembeli.</em>
-            </span>
-          </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          
+          <!-- Card Surya -->
+          <button onclick="openConceptModal('surya')" class="group p-3 rounded-xl border border-amber-200 bg-gradient-to-b from-amber-50/50 to-white hover:border-amber-400 hover:shadow-md transition text-left">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 mb-2 group-hover:scale-110 transition">
+              ☀️
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800">Panel Surya</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">Efek fotovoltaik menyerap foton menjadi elektron.</p>
+          </button>
+
+          <!-- Card Bayu -->
+          <button onclick="openConceptModal('bayu')" class="group p-3 rounded-xl border border-sky-200 bg-gradient-to-b from-sky-50/50 to-white hover:border-sky-400 hover:shadow-md transition text-left">
+            <div class="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600 mb-2 group-hover:scale-110 transition">
+              💨
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800">Bayu (Angin)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">Energi kinetik massa udara memutar rotor turbin.</p>
+          </button>
+
+          <!-- Card Air -->
+          <button onclick="openConceptModal('air')" class="group p-3 rounded-xl border border-blue-200 bg-gradient-to-b from-blue-50/50 to-white hover:border-blue-400 hover:shadow-md transition text-left">
+            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mb-2 group-hover:scale-110 transition">
+              🌊
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800">Hidro (Air)</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">Energi potensial ketinggian gravitasi memutar generator.</p>
+          </button>
+
+          <!-- Card Geotermal & Biomassa -->
+          <button onclick="openConceptModal('geo')" class="group p-3 rounded-xl border border-emerald-200 bg-gradient-to-b from-emerald-50/50 to-white hover:border-emerald-400 hover:shadow-md transition text-left">
+            <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 mb-2 group-hover:scale-110 transition">
+              🌋
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800">Geotermal</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">Entalpi uap panas perut bumi stabil tanpa cuaca.</p>
+          </button>
+
         </div>
       </div>
 
     </section>
 
-    <!-- KOLOM KANAN: CONTROL DECK & VARIABEL INTERAKTIF (5 Kolom) -->
-    <section class="lg:col-span-5 flex flex-col gap-5">
+    <!-- RIGHT: Control Room Sandbox & Socratic AI Sidekick (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
       
-      <!-- Pilihan Kasus / Produk Sekitar Sekolah -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Pilih Objek Produk Santri / Sekitar:</label>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="selectProduct('madu')" id="btn-prod-madu" class="p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-emerald-950 text-left transition-all">
-            <div class="text-lg mb-1">ðŸ¯</div>
-            <div class="text-xs font-bold">Madu Al-Barokah</div>
-            <div class="text-[10px] text-slate-500">Koperasi Pesantren</div>
-          </button>
-          <button onclick="selectProduct('sabun')" id="btn-prod-sabun" class="p-2.5 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-slate-800 text-left transition-all">
-            <div class="text-lg mb-1">ðŸ§¼</div>
-            <div class="text-xs font-bold">Sabun Daun Bidara</div>
-            <div class="text-[10px] text-slate-500">Karya Santripreneur</div>
-          </button>
-          <button onclick="selectProduct('tahfidz')" id="btn-prod-tahfidz" class="p-2.5 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-slate-800 text-left transition-all">
-            <div class="text-lg mb-1">ðŸ“–</div>
-            <div class="text-xs font-bold">Klinik Tahsin Kilat</div>
-            <div class="text-[10px] text-slate-500">Program Remaja Masjid</div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Control Deck: Variabel Teks Persuasif (4 Variabel Inti) -->
-      <div class="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-sm flex flex-col gap-5">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-            <span class="w-6 h-6 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-extrabold">1</span>
-            Kemudi Retorika & Formula Closing
-          </h3>
-          <span class="text-xs text-slate-400">Manipulasi Real-Time</span>
-        </div>
-
-        <!-- Variabel 1: Diksi Headline / Slogan (Gaya Bahasa Hook) -->
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-xs font-bold text-slate-700">1. Gaya Diksi Judul / Slogan (Hook)</label>
-            <span id="label-diksi-val" class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Solutif & Empatik</span>
-          </div>
-          <select id="select-diksi" onchange="updateSimulation()" class="w-full text-xs font-medium p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden transition-all">
-            <option value="biasa">1. Dingin/Monoton: "Kami Jual Madu Asli Silakan Beli"</option>
-            <option value="solutif" selected>2. Solutif & Berfaedah: "Tetap Fit di Bulan Mulia, Ibadah Tanpa Letih"</option>
-            <option value="puitis">3. Rima/Slogan Indah: "Setetes Murni, Sejuta Energi, Sepenuh Hati"</option>
-            <option value="bombastis">4. Bombastis/Overclaim: "Madu Ajaib 1000 Khasiat Sekali Minum Sakit Hilang Total!"</option>
-          </select>
-          <p class="text-[11px] text-slate-400 mt-1">Diksi menentukan apakah pembaca berhenti menggulir layar dalam 3 detik pertama.</p>
-        </div>
-
-        <!-- Variabel 2: Dalil Nilai / Manfaat Produk (Value & Amanah) -->
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-xs font-bold text-slate-700">2. Bobot Fakta & Nilai Kejujuran (Amanah)</label>
-            <span id="slider-value-val" class="text-xs font-bold text-emerald-600">80%</span>
-          </div>
-          <input type="range" id="slider-value" min="10" max="100" value="80" step="5" oninput="updateSimulation()" class="w-full accent-emerald-600 cursor-pointer">
-          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-            <span>Fakta Nihil (Ragu)</span>
-            <span>Uji Lab + Khasiat Nyata</span>
-            <span>Garansi Berkah Berkelanjutan</span>
-          </div>
-        </div>
-
-        <!-- Variabel 3: Hierarki Visual & Tipografi Poster -->
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-xs font-bold text-slate-700">3. Kontras & Keterbacaan Visual (Layout)</label>
-            <span id="slider-visual-val" class="text-xs font-bold text-teal-600">75%</span>
-          </div>
-          <input type="range" id="slider-visual" min="20" max="100" value="75" step="5" oninput="updateSimulation()" class="w-full accent-teal-600 cursor-pointer">
-          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-            <span>Gelap / Sulit Dibaca</span>
-            <span>Proporsional (Eye-Catching)</span>
-            <span>Kontras Emas Tertinggi</span>
-          </div>
-        </div>
-
-        <!-- Variabel 4: Rumus Call-To-Action (CTA Closing) -->
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-xs font-bold text-slate-700">4. Daya Tekan Call to Action (Ajakan Bertindak)</label>
-            <span id="label-cta-val" class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">CTA Berkah + Sedekah</span>
-          </div>
-          <select id="select-cta" onchange="updateSimulation()" class="w-full text-xs font-medium p-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden transition-all">
-            <option value="pasif">1. Ajakan Lemah: "Hubungi kontak kami bila Anda berminat"</option>
-            <option value="diskon">2. Insentif Hemat: "Pesan Hari Ini: Diskon 15% Khusus Warga Sekolah"</option>
-            <option value="berkah" selected>3. Nilai Berkah: "Pesan via Koperasi: Otomatis Infaq 5% untuk Anak Yatim"</option>
-            <option value="urgensi">4. FOMO/Mendesak: "Sisa 3 Botol! Beli Sekarang Sebelum Kehabisan!"</option>
-          </select>
-        </div>
-
-      </div>
-
-      <!-- Tantangan Misi Nyata (Scenario Briefing) -->
-      <div class="bg-amber-50 border border-amber-200/80 rounded-3xl p-5 shadow-xs">
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 font-bold text-sm shadow-xs">
-            ðŸŽ¯
-          </div>
+      <!-- Panel Kontrol Bauran Energi (Simulator Sandbox) -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
-            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Misi Praktik Siswa:</h4>
-            <p class="text-xs text-amber-800 mt-1 leading-relaxed">
-              <strong>"Koperasi sekolah mencatat stok madu menumpuk karena promosi sebelumnya dianggap terlalu datar."</strong>
-              <br>Rancanglah kombinasi teks iklan atau poster yang mampu meraih <em>Daya Pikat &gt; 75</em>, <em>Nilai Amanah &gt; 70</em>, dan <em>Potensi Closing &gt; 65%</em> tanpa memakai kebohongan (*overclaim*)!
-            </p>
-            <div id="mission-status-box" class="mt-3 flex items-center justify-between bg-white/80 p-2 rounded-xl border border-amber-200">
-              <span class="text-xs font-bold text-amber-900">Hasil Capaian Misi:</span>
-              <span id="mission-badge" class="px-2 py-0.5 text-xs font-extrabold rounded-md bg-amber-200 text-amber-900">Belum Tercapai</span>
+            <h3 class="font-display font-bold text-slate-900 text-base">Konsol Racikan Bauran Energi</h3>
+            <p class="text-xs text-slate-500">Manipulasi variabel sumber pembangkit secara bebas.</p>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">PBL & Inkuiri</span>
+        </div>
+
+        <!-- Sliders Group -->
+        <div class="space-y-4 pt-4">
+          
+          <!-- Slider 1: Surya / PLTS -->
+          <div>
+            <div class="flex justify-between items-center text-xs font-semibold mb-1">
+              <span class="flex items-center gap-1.5 text-amber-700">
+                <span>☀️</span> Pembangkit Listrik Surya (PLTS)
+              </span>
+              <span id="valSuryaTxt" class="font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">0 kW</span>
+            </div>
+            <input type="range" id="sliderSurya" min="0" max="250" value="0" step="5" oninput="updateSimulation()"
+                   class="w-full h-2 bg-amber-100 rounded-lg appearance-none cursor-pointer accent-amber-500">
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>0 kW</span>
+              <span id="suryaWeatherNote" class="text-amber-600 font-medium">Optimal di siang terik</span>
+              <span>250 kW</span>
             </div>
           </div>
+
+          <!-- Slider 2: Bayu / PLTB -->
+          <div>
+            <div class="flex justify-between items-center text-xs font-semibold mb-1">
+              <span class="flex items-center gap-1.5 text-sky-700">
+                <span>💨</span> Pembangkit Tenaga Bayu/Angin (PLTB)
+              </span>
+              <span id="valAnginTxt" class="font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">0 kW</span>
+            </div>
+            <input type="range" id="sliderAngin" min="0" max="200" value="0" step="5" oninput="updateSimulation()"
+                   class="w-full h-2 bg-sky-100 rounded-lg appearance-none cursor-pointer accent-sky-500">
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>0 m/s (Diam)</span>
+              <span>Kec. Turbin Dinamis</span>
+              <span>20 m/s (200 kW)</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: Air / PLTA -->
+          <div>
+            <div class="flex justify-between items-center text-xs font-semibold mb-1">
+              <span class="flex items-center gap-1.5 text-blue-700">
+                <span>🌊</span> Pembangkit Listrik Tenaga Air (PLTA)
+              </span>
+              <span id="valAirTxt" class="font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">0 kW</span>
+            </div>
+            <input type="range" id="sliderAir" min="0" max="200" value="0" step="5" oninput="updateSimulation()"
+                   class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600">
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+              <span>Katup Tertutup</span>
+              <span>Daya Beban Puncak (Baseload)</span>
+              <span>Debit Penuh (200 kW)</span>
+            </div>
+          </div>
+
+          <!-- Dilema: Toggle Sumber Cadangan Fosil (Batu Bara / Diesel) -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span>🏭</span> PLTU Cadangan Fosil (Batu Bara)
+                </span>
+                <p class="text-[11px] text-slate-500 mt-0.5">Dapat memberi 150 kW instan, namun memicu polusi karbon berat.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleFosil" onchange="updateSimulation()" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Preset Tantangan Cepat (Scenario Buttons) -->
+        <div class="mt-4 pt-3 border-t border-slate-100">
+          <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Tantangan Cepat (Studi Kasus):</label>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button onclick="applyScenario('nightDeficit')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-left transition">
+              🌙 <b>Malam Gelap:</b> Surya Hilang Total
+            </button>
+            <button onclick="applyScenario('eco100')" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-medium text-left border border-emerald-200 transition">
+              🌿 <b>Zero Emission:</b> 100% Bersih & Stabil
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SOCRATIC BOT COMPANION ("Volt") - Dialog Kognitif Berkelanjutan -->
+      <div class="bg-gradient-to-br from-slate-900 to-tech-900 text-white rounded-2xl p-4 shadow-lg relative overflow-hidden flex-1 flex flex-col justify-between">
+        <!-- Glow Ambient -->
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-emerald-500/20 blur-2xl"></div>
+
+        <div>
+          <!-- Header Bot -->
+          <div class="flex items-center gap-2.5 pb-2 border-b border-slate-800">
+            <div class="relative">
+              <div class="w-9 h-9 rounded-full bg-emerald-400 flex items-center justify-center text-slate-950 font-bold text-base glow-pulse">
+                ⚡
+              </div>
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-400 border border-slate-900"></span>
+            </div>
+            <div>
+              <h4 class="font-display font-bold text-sm text-emerald-400">Volt: Sahabat Inkuiri</h4>
+              <p class="text-[10px] text-slate-400">Tutor AI Pedagogis TPACK</p>
+            </div>
+          </div>
+
+          <!-- Dialog Bubble Dinamis -->
+          <div class="mt-3">
+            <p id="voltSpeechBubble" class="text-xs sm:text-sm leading-relaxed text-slate-200 font-medium">
+              "Halo Peneliti Muda! Kota kita butuh daya minimal <b>450 kW - 500 kW</b> agar semua fasilitas menyala tanpa pemadaman. Coba geser salah satu tuas di atas!"
+            </p>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Tanya Balik / Refleksi -->
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+          <span id="voltHintState" class="text-[11px] text-emerald-300 font-mono">Status: Menunggu aksimu</span>
+          <button onclick="triggerVoltQuestion()" class="px-2.5 py-1 text-xs rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition font-semibold">
+            Ajukan Pertanyaan Kritis? 💡
+          </button>
         </div>
       </div>
 
@@ -425,376 +551,385 @@
 
   </main>
 
-  <!-- ==================== MODAL ANATOMI KONSEP TPACK ==================== -->
-  <div id="modal-anatomi" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-3xl p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">ðŸ“š</div>
-          <h3 class="text-base font-bold text-slate-900">Anatomi Retorika Teks: Iklan vs Slogan vs Poster</h3>
+  <!-- MODAL: Detail Konseptual Non-Linear (TPACK Content Window) -->
+  <div id="conceptModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Close Button -->
+      <button onclick="closeConceptModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 font-bold">
+        ✕
+      </button>
+
+      <!-- Modal Content Header -->
+      <div class="flex items-center gap-3 mb-4">
+        <span id="modalIcon" class="text-3xl">☀️</span>
+        <div>
+          <h3 id="modalTitle" class="font-display font-bold text-lg text-slate-900">Judul Konsep</h3>
+          <p id="modalCategory" class="text-xs font-semibold text-emerald-600">Fisika Energi Terbarukan</p>
         </div>
-        <button onclick="toggleModal('modal-anatomi')" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </div>
+
+      <!-- Modal Body -->
+      <div id="modalDescription" class="text-xs sm:text-sm text-slate-600 space-y-3 leading-relaxed">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Prinsip Perubahan Energi Box -->
+      <div class="mt-5 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Hukum Konversi Energi:</span>
+        <p id="modalFormula" class="font-mono text-xs text-slate-800 font-semibold">Energi Radiasi Surya ➔ Aliran Foton ➔ Energi Listrik (DC)</p>
+      </div>
+
+      <div class="mt-5 text-right">
+        <button onclick="closeConceptModal()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-md transition">
+          Saya Mengerti, Lanjutkan Simulasi!
         </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        <!-- Kartu 1: Iklan -->
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-          <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold mb-2">IKLAN</div>
-          <h4 class="text-xs font-bold text-slate-900">Teks Iklan</h4>
-          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
-            Menekankan unsur gambar, kata-kata, gerak, atau suara. Bersifat komprehensif memuat <strong>masalah, solusi, bukti, hingga Call to Action (tindakan beli)</strong>.
-          </p>
-          <div class="mt-2 text-[10px] font-semibold text-blue-700 bg-blue-50 p-1.5 rounded-lg">Fokus: Solusi & Closing</div>
-        </div>
-
-        <!-- Kartu 2: Slogan -->
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-          <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold mb-2">SLOGAN</div>
-          <h4 class="text-xs font-bold text-slate-900">Teks Slogan</h4>
-          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
-            Mengutamakan <strong>kepadatan makna, keindahan rima, dan daya ingat tinggi</strong>. Biasanya terdiri dari kalimat pendek yang menjadi semboyan atau visi.
-          </p>
-          <div class="mt-2 text-[10px] font-semibold text-amber-700 bg-amber-50 p-1.5 rounded-lg">Fokus: Daya Ingat & Prinsip</div>
-        </div>
-
-        <!-- Kartu 3: Poster -->
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
-          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold mb-2">POSTER</div>
-          <h4 class="text-xs font-bold text-slate-900">Teks Poster</h4>
-          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
-            Mengutamakan <strong>kekuatan visual, perpaduan ilustrasi mencolok dan tulisan singkat</strong> yang dipasang di tempat umum agar terbaca saat orang melintas.
-          </p>
-          <div class="mt-2 text-[10px] font-semibold text-emerald-700 bg-emerald-50 p-1.5 rounded-lg">Fokus: Hierarki Visual & Lokasi</div>
-        </div>
-      </div>
-
-      <!-- Kaidah Etika Promosi Berkarakter Islami -->
-      <div class="mt-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950">
-        <h4 class="text-xs font-bold flex items-center gap-1.5 mb-1 text-emerald-900">
-          <span>ðŸŒ¿ Nilai Akhlak dalam Komunikasi Persuasif (Fase D SMP)</span>
-        </h4>
-        <p class="text-xs leading-relaxed text-emerald-800">
-          Iklan modern sering menjebak konsumen dengan kata-kata bohong (<em>taghrir</em> atau penipuan khasiat). Dalam adab komunikasi Islami, kekuatan persuasi dibangun di atas <strong>kejujuran (shiddiq)</strong>, <strong>dapat dipercaya (amanah)</strong>, dan memberikan <strong>kebermanfaatan nyata (tabligh & fathanah)</strong>. Closing yang tinggi lahir dari kepercayaan jangka panjang, bukan klaim palsu.
-        </p>
-      </div>
-
-      <div class="mt-5 flex justify-end">
-        <button onclick="toggleModal('modal-anatomi')" class="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors">Tutup Panduan</button>
-      </div>
     </div>
   </div>
 
-  <!-- ==================== JAVASCRIPT STATE ENGINE ==================== -->
+  <!-- JAVASCRIPT: Engine Simulasi Dinamis & Logika TPACK -->
   <script>
-    // State Aplikasi Dinamis
+    // State Aplikasi
     const state = {
-      product: 'madu', // madu | sabun | tahfidz
-      mediaType: 'poster', // poster | iklan | slogan
-      diksiKey: 'solutif',
-      valueScore: 80,
-      visualScore: 75,
-      ctaKey: 'berkah',
-      calculated: {
-        hook: 45,
-        ethics: 80,
-        closing: 32,
-        isSuccess: false
+      isDayTime: true,
+      powerSurya: 0,
+      powerAngin: 0,
+      powerAir: 0,
+      fossilActive: false,
+      targetPower: 500,
+      minCityLitPower: 420
+    };
+
+    // Database Materi Pembelajaran Non-Linear (Content Knowledge)
+    const conceptDatabase = {
+      surya: {
+        icon: '☀️',
+        title: 'Panel Surya Fotovoltaik (PLTS)',
+        category: 'Pemanfaatan Energi Foton Matahari',
+        description: `
+          <p>Panel surya terbuat dari bahan semikonduktor silikon. Ketika partikel cahaya (foton) menghantam lapisan silikon, elektron terlepas dari atomnya dan terdorong mengalir membentuk arus listrik searah (DC).</p>
+          <p class="font-medium text-slate-800">Tantangan Ilmiah:</p>
+          <p>Energi surya bersifat <i>intermittent</i> (bergantung cuaca dan waktu). Tanpa sinar matahari (seperti di malam hari atau mendung tebal), daya output turun drastis sehingga membutuhkan sistem penyimpanan baterai (BESS).</p>
+        `,
+        formula: 'Radiasi Matahari (Foton) ➔ Eksitasi Elektron Silikon ➔ Arus Listrik (DC)'
+      },
+      bayu: {
+        icon: '💨',
+        title: 'Pembangkit Listrik Tenaga Bayu (PLTB)',
+        category: 'Konversi Aerodinamika & Kinetik',
+        description: `
+          <p>Angin yang bertiup mendorong bilah turbin berdesain aerodinamis mirip sayap pesawat. Perbedaan tekanan udara menghasilkan gaya angkat (lift) yang memutar poros rotor utama.</p>
+          <p>Poros berputar menggerakkan <i>gearbox</i> untuk melipatgandakan putaran hingga ribuan RPM sebelum memutar generator magnetik yang menghasilkan arus listrik bolak-balik (AC).</p>
+        `,
+        formula: 'Energi Kinetik Angin (½ m v²) ➔ Putaran Mekanik Rotor ➔ Generator Listrik (AC)'
+      },
+      air: {
+        icon: '🌊',
+        title: 'Pembangkit Listrik Tenaga Air (PLTA)',
+        category: 'Gravitasi & Dinamika Fluida Hidro',
+        description: `
+          <p>Air yang tertampung di bendungan tinggi memiliki energi potensial gravitasi besar. Saat pintu air dibuka, air mengalir dengan kecepatan dan tekanan tinggi melalui pipa pesat (penstock).</p>
+          <p>Dorongan air menabrak sudu-sudu turbin Francis/Pelton dan memutarnya secara stabil, menjadikannya sumber <i>baseload</i> (energi andalan stabil) paling terpercaya.</p>
+        `,
+        formula: 'Energi Potensial Air (m · g · h) ➔ Tekanan Kinetik Pipa ➔ Turbin & Generator'
+      },
+      geo: {
+        icon: '🌋',
+        title: 'Panas Bumi (Geotermal) & Biomassa',
+        category: 'Termodinamika Bumi & Siklus Karbon',
+        description: `
+          <p>Indonesia memiliki 40% cadangan panas bumi dunia di jalur <i>Ring of Fire</i>. Panas dari mantel bumi memanaskan air tanah menjadi uap bertekanan super tinggi yang disedot untuk menggerakkan turbin uap murni.</p>
+          <p>Keunggulan utamanya adalah faktor kapasitas yang sangat tinggi (>90%) karena tidak pernah terpengaruh oleh malam hari, hujan badai, maupun musim kemarau.</p>
+        `,
+        formula: 'Entalpi Termal Mantel Bumi ➔ Uap Bertekanan Kritis ➔ Turbin Uap ➔ Listrik Terus Menerus'
       }
     };
 
-    // Database Produk & Konten Variabel
-    const productCatalog = {
-      madu: {
-        title: 'Madu Al-Barokah',
-        subUnit: 'Koperasi Santri',
-        badgeText: '100% AMANAH & MURNI',
-        artColor: '#f59e0b',
-        artBgStop1: '#064e3b',
-        artBgStop2: '#022c22',
-        headlines: {
-          biasa: { title: "KAMI MENJUAL MADU ASLI HUTAN", sub: "Isi 350ml, silakan hubungi nomor koperasi." },
-          solutif: { title: "TETAP FIT DI BULAN MULIA", sub: "Energi Ibadah Tanpa Khawatir Letih Saat Puasa & Qiyam" },
-          puitis: { title: "SETETES MURNI, SEJUTA ENERGI", sub: "Madu Alami, Menjaga Stamina Sepenuh Hati" },
-          bombastis: { title: "SEKALI TEGUK SEMUA PENYAKIT HILANG!", sub: "Madu Ajaib Menyembuhkan Apapun 100% Garansi Sakti" }
-        },
-        benefits: {
-          line1: "ðŸ¯ Madu Randu Murni Langsung dari Peternak Santri",
-          line2: "Tanpa campuran gula rafinasi. Jaga stamina belajar & ibadah."
-        },
-        ctaTexts: {
-          pasif: "Hubungi koperasi sekolah jika Anda butuh.",
-          diskon: "BELI HARI INI: DISKON 15% KHUSUS SANTRI & GURU",
-          berkah: "PESAN VIA KOPERASI: INFAQ 5% OTOMATIS KE DHUAFA",
-          urgensi: "BURUAN! HANYA TERSISA 3 BOTOL LAGI HARI INI!"
-        }
-      },
-      sabun: {
-        title: 'Sabun Herbal Bidara',
-        subUnit: 'Karya Santripreneur',
-        badgeText: 'ALAMI, SEJUK & THAYYIB',
-        artColor: '#10b981',
-        artBgStop1: '#0f766e',
-        artBgStop2: '#134e4a',
-        headlines: {
-          biasa: { title: "SABUN BATANG DAUN BIDARA", sub: "Tersedia aroma mint dan original di toko." },
-          solutif: { title: "SEGAR SEPANJANG HARI, KULIT TERLINDUNGI", sub: "Perlindungan Alami dari Keringat & Iritasi Seharian di Sekolah" },
-          puitis: { title: "DAUN BIDARA, SEJUKKAN RAGA", sub: "Sentuhan Tradisi Nabawi untuk Kebersihan Diri" },
-          bombastis: { title: "KULIT HITAM LANGSUNG PUTIH BERSINAR 1 HARI!", sub: "Sabun Sakti Anti Jerawat & Menghilangkan Semua Dosa Kulit" }
-        },
-        benefits: {
-          line1: "ðŸŒ¿ Ekstrak Daun Bidara Segar & Minyak Zaitun Alami",
-          line2: "Bebas SLS dan deterjen keras, lembut untuk kulit sensitif."
-        },
-        ctaTexts: {
-          pasif: "Bisa ditanyakan ke stan santripreneur.",
-          diskon: "BELI PAKET 3 BATANG: HEMAT RP 10.000",
-          berkah: "DAPATKAN SEKARANG: WUJUDKAN KEMANDIRIAN SANTRI",
-          urgensi: "STOK TERBATAS! HANYA DICETAK 50 BATANG PEKAN INI!"
-        }
-      },
-      tahfidz: {
-        title: 'Klinik Tahsin Kilat',
-        subUnit: 'Remaja Masjid & OSIS',
-        badgeText: 'FASIH & BERTARTIL',
-        artColor: '#38bdf8',
-        artBgStop1: '#1e3a8a',
-        artBgStop2: '#0f172a',
-        headlines: {
-          biasa: { title: "DIBUKA PENDAFTARAN BELAJAR NGAJI", sub: "Pertemuan setiap sabtu sore di masjid sekolah." },
-          solutif: { title: "LEBIH PERCAYA DIRI MEMBACA AL-QUR'AN", sub: "Metode Ringkas Memperbaiki Makhraj & Tajwid dalam 30 Hari" },
-          puitis: { title: "LANTUNKAN AYAT-NYA DENGAN TARTIL INDAH", sub: "Bimbingan Ramah, Mengalirkan Cahaya Al-Qur'an di Hati" },
-          bombastis: { title: "1 JAM LANGSUNG HAFAL JUZ 30 DAN NGAJI TANPA SALAH!", sub: "Metode Gaib Membaca Al-Qur'an Secepat Kilat Tanpa Belajar" }
-        },
-        benefits: {
-          line1: "ðŸ“– Ustadz Pembimbing Bersanad & Kelas Kecil Interaktif",
-          line2: "Evaluasi bacaan personal, nyaman tanpa rasa malu bagi pemula."
-        },
-        ctaTexts: {
-          pasif: "Formulir pendaftaran ada di sekretariat OSIS.",
-          diskon: "DAFTAR BERSAMA TEMAN: GRATIS KITAB PANDUAN TAHSIN",
-          berkah: "AMBIL KESEMPATAN INI: TUNTUT ILMU PENUH BERKAH",
-          urgensi: "KUOTA SISA 4 KURSI! KELAS DITUTUP JUMAT INI!"
-        }
-      }
-    };
-
-    // Fungsi Pengganti Produk
-    function selectProduct(key) {
-      state.product = key;
-      // Update styling tombol
-      ['madu', 'sabun', 'tahfidz'].forEach(k => {
-        const btn = document.getElementById(`btn-prod-${k}`);
-        if (k === key) {
-          btn.className = "p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-emerald-950 text-left transition-all shadow-xs";
-        } else {
-          btn.className = "p-2.5 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-slate-800 text-left transition-all";
-        }
-      });
-      document.getElementById('badge-produk').innerText = "Produk: " + productCatalog[key].title;
-      updateSimulation();
-    }
-
-    // Fungsi Pengganti Format Media
-    function setMediaType(type) {
-      state.mediaType = type;
-      ['poster', 'iklan', 'slogan'].forEach(t => {
-        const tab = document.getElementById(`tab-${t}`);
-        if (t === type) {
-          tab.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white text-emerald-800 shadow-xs transition-all";
-        } else {
-          tab.className = "px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all";
-        }
-      });
-      
-      const cardRect = document.getElementById('card-rect');
-      const bodyGroup = document.getElementById('group-body-text');
-      const ctaGroup = document.getElementById('group-cta');
-      const productArt = document.getElementById('product-art');
-
-      if (type === 'slogan') {
-        // Mode slogan: Fokus pada teks puitis/motto, sembunyikan detail teknis panjang
-        bodyGroup.style.display = 'none';
-        ctaGroup.style.display = 'none';
-        productArt.setAttribute('transform', 'translate(300, 420) scale(1.15)');
-      } else if (type === 'iklan') {
-        // Mode iklan feed: Lengkap dengan CTA tombol transaksi
-        bodyGroup.style.display = 'block';
-        ctaGroup.style.display = 'block';
-        productArt.setAttribute('transform', 'translate(300, 340) scale(1)');
-      } else {
-        // Mode poster fisik: Elemen grafis besar & mudah dilihat dari jauh
-        bodyGroup.style.display = 'block';
-        ctaGroup.style.display = 'block';
-        productArt.setAttribute('transform', 'translate(300, 340) scale(1)');
-      }
-
-      updateSimulation();
-    }
-
-    // Evaluator Algoritma TPACK Kognitif & Retorika
+    // Fungsi Utama: Sinkronisasi Simulasi Fisika & Visual
     function updateSimulation() {
-      // Ambil nilai dari DOM
-      state.diksiKey = document.getElementById('select-diksi').value;
-      state.valueScore = parseInt(document.getElementById('slider-value').value);
-      state.visualScore = parseInt(document.getElementById('slider-visual').value);
-      state.ctaKey = document.getElementById('select-cta').value;
+      // Baca slider
+      let rawSurya = parseInt(document.getElementById('sliderSurya').value);
+      state.powerAngin = parseInt(document.getElementById('sliderAngin').value);
+      state.powerAir = parseInt(document.getElementById('sliderAir').value);
+      state.fossilActive = document.getElementById('toggleFosil').checked;
 
-      // Update Label Angka
-      document.getElementById('slider-value-val').innerText = state.valueScore + '%';
-      document.getElementById('slider-visual-val').innerText = state.visualScore + '%';
-
-      const currentProd = productCatalog[state.product];
-      const headlineData = currentProd.headlines[state.diksiKey];
-
-      // 1. Kalkulasi Daya Pikat (Hook): dipengaruhi diksi dan visual kontras
-      let hook = 30;
-      if (state.diksiKey === 'biasa') hook = 35;
-      else if (state.diksiKey === 'solutif') hook = 78;
-      else if (state.diksiKey === 'puitis') hook = 82;
-      else if (state.diksiKey === 'bombastis') hook = 92; // Sangat memikat tapi bahaya di etika
-
-      // Modifikasi dengan visual slider (kontras gambar & teks)
-      hook = Math.round((hook * 0.6) + (state.visualScore * 0.4));
-
-      // 2. Kalkulasi Nilai Amanah / Kejujuran Etika
-      let ethics = state.valueScore;
-      if (state.diksiKey === 'bombastis') {
-        // Penalti keras jika melakukan overclaim / janji palsu
-        ethics = Math.round(ethics * 0.25);
-      } else if (state.diksiKey === 'solutif') {
-        ethics = Math.min(100, ethics + 5);
-      }
-
-      // 3. Kalkulasi Potensi Closing (Tindakan Pesan Nyata)
-      // Closing butuh gabungan: Hook tinggi + Nilai Amanah terpercaya + CTA yang tepat
-      let ctaPower = 35;
-      if (state.ctaKey === 'pasif') ctaPower = 30;
-      else if (state.ctaKey === 'diskon') ctaPower = 70;
-      else if (state.ctaKey === 'berkah') ctaPower = 85;
-      else if (state.ctaKey === 'urgensi') ctaPower = 75;
-
-      let closing = 0;
-      if (ethics < 40) {
-        // Jika tidak dipercaya / dicurigai menipu, closing langsung anjlok drastis!
-        closing = Math.round((hook * 0.2) + (ethics * 0.2) + (ctaPower * 0.1));
+      // Logika Surya berdasarkan Siang/Malam
+      if (!state.isDayTime) {
+        state.powerSurya = 0;
+        document.getElementById('suryaWeatherNote').innerText = 'Malam Hari: Daya 0 kW!';
+        document.getElementById('suryaWeatherNote').className = 'text-rose-500 font-bold';
       } else {
-        closing = Math.round((hook * 0.35) + (ethics * 0.35) + (ctaPower * 0.3));
+        state.powerSurya = rawSurya;
+        document.getElementById('suryaWeatherNote').innerText = 'Optimal di siang terik';
+        document.getElementById('suryaWeatherNote').className = 'text-amber-600 font-medium';
       }
-      closing = Math.min(96, Math.max(8, closing));
 
-      // Simpan di state
-      state.calculated = { hook, ethics, closing };
+      const fossilPower = state.fossilActive ? 150 : 0;
+      const totalPower = state.powerSurya + state.powerAngin + state.powerAir + fossilPower;
 
-      // Render ke HUD Telemetry
-      document.getElementById('metric-hook').innerText = hook;
-      document.getElementById('metric-ethics').innerText = ethics;
-      document.getElementById('metric-closing').innerText = closing + '%';
+      // Update Label Angka Slider
+      document.getElementById('valSuryaTxt').innerText = `${state.powerSurya} kW`;
+      document.getElementById('valAnginTxt').innerText = `${state.powerAngin} kW`;
+      document.getElementById('valAirTxt').innerText = `${state.powerAir} kW`;
 
-      // Update warna indikator etika
-      const ethicsEl = document.getElementById('metric-ethics');
-      if (ethics < 50) ethicsEl.className = "text-lg font-extrabold text-rose-600 animate-pulse";
-      else if (ethics < 75) ethicsEl.className = "text-lg font-extrabold text-amber-600";
-      else ethicsEl.className = "text-lg font-extrabold text-emerald-600";
+      // Update Angka Live Footer
+      document.getElementById('statSurya').innerText = `${state.powerSurya} kW`;
+      document.getElementById('statAngin').innerText = `${state.powerAngin} kW`;
+      document.getElementById('statAir').innerText = `${state.powerAir} kW`;
+      document.getElementById('statFosil').innerText = `${fossilPower} kW`;
 
-      // Render Teks & Visual ke SVG Kanvas
-      document.getElementById('canvas-headline').textContent = headlineData.title;
-      document.getElementById('canvas-subheadline').textContent = headlineData.sub;
-      document.getElementById('canvas-benefit-1').textContent = currentProd.benefits.line1;
-      document.getElementById('canvas-benefit-2').textContent = currentProd.benefits.line2;
-      document.getElementById('cta-button-text').textContent = currentProd.ctaTexts[state.ctaKey] + " âž”";
-      document.getElementById('badge-text').textContent = currentProd.badgeText;
+      // Update Display Total Power Header
+      const totalDisplay = document.getElementById('totalPowerDisplay');
+      totalDisplay.innerText = `${totalPower} kW`;
 
-      // Manipulasi Warna Latar & Aura SVG Berdasarkan Slider Visual
-      const visualFactor = state.visualScore / 100;
-      document.getElementById('art-aura').setAttribute('opacity', (0.1 + (visualFactor * 0.3)).toFixed(2));
-      document.getElementById('art-aura').setAttribute('r', (90 + (visualFactor * 45)).toFixed(0));
+      // Hitung Indeks Polusi / Emisi
+      const aqiBadge = document.getElementById('aqiBadge');
+      const birds = document.getElementById('birdsCleanAir');
+      const smokePuffs = document.getElementById('smokePuffs');
+      const fossilVisual = document.getElementById('fossilPlantVisual');
 
-      const bgStop1 = document.getElementById('bg-stop-1');
-      const bgStop2 = document.getElementById('bg-stop-2');
-      if (state.diksiKey === 'bombastis') {
-        bgStop1.setAttribute('stop-color', '#4c0519'); // Merah pekat indikasi warning
-        bgStop2.setAttribute('stop-color', '#1f030a');
-        document.getElementById('canvas-status-tag').innerText = "Peringatan: Teks Mengandung Overclaim!";
-        document.getElementById('canvas-status-tag').parentElement.className = "absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-rose-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-rose-500/40 text-xs text-rose-300";
+      if (state.fossilActive) {
+        aqiBadge.className = 'px-2 py-0.5 rounded-md font-semibold text-xs bg-rose-100 text-rose-800 border border-rose-300';
+        aqiBadge.innerText = '⚠️ Polusi 185 AQI (Asap Kering)';
+        birds.style.opacity = '0';
+        smokePuffs.style.opacity = '1';
+        fossilVisual.style.opacity = '1';
       } else {
-        bgStop1.setAttribute('stop-color', currentProd.artBgStop1);
-        bgStop2.setAttribute('stop-color', currentProd.artBgStop2);
-        document.getElementById('canvas-status-tag').innerText = "Status Desain: Persuasif Beretika (" + state.mediaType.toUpperCase() + ")";
-        document.getElementById('canvas-status-tag').parentElement.className = "absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-500/40 text-xs text-emerald-300";
+        aqiBadge.className = 'px-2 py-0.5 rounded-md font-semibold text-xs bg-emerald-100 text-emerald-800 border border-emerald-300';
+        aqiBadge.innerText = '🌿 0% Emisi (Langit Bersih)';
+        birds.style.opacity = '1';
+        smokePuffs.style.opacity = '0';
+        fossilVisual.style.opacity = '0.15';
       }
 
-      // Update Asisten Sokratik Kalam
-      updateKalamGuidance(hook, ethics, closing);
+      // Animasi Putaran Baling-Baling Angin via CSS Variable
+      const turbineRoot = document.documentElement;
+      if (state.powerAngin > 0) {
+        // Semakin besar angin, durasi putaran semakin kecil (makin cepat)
+        const speed = Math.max(0.3, 3.5 - (state.powerAngin / 200) * 3);
+        turbineRoot.style.setProperty('--wind-speed', `${speed}s`);
+      } else {
+        turbineRoot.style.setProperty('--wind-speed', `999s`); // Berhenti
+      }
 
-      // Cek Status Misi
-      checkMissionSuccess(hook, ethics, closing);
+      // Animasi Aliran Air PLTA
+      const hydroStream = document.getElementById('hydroWaterStream');
+      if (state.powerAir > 0) {
+        hydroStream.style.stroke = '#38bdf8';
+        hydroStream.style.strokeWidth = `${4 + (state.powerAir / 200) * 8}`;
+      } else {
+        hydroStream.style.stroke = 'transparent';
+      }
+
+      // Evaluasi Kondisi Listrik Kota & Pencahayaan Gedung
+      evaluateCityLighting(totalPower);
+
+      // Dialog Sokratik Volt Cerdas
+      updateVoltFeedback(totalPower, fossilPower);
     }
 
-    // Kecerdasan Buatan Kalam (Socratic Reasoning Engine)
-    function updateKalamGuidance(hook, ethics, closing) {
-      const dialogue = document.getElementById('kalam-dialogue');
-      const tag = document.getElementById('kalam-mode-tag');
+    // Evaluasi Pencahayaan Visual Kota
+    function evaluateCityLighting(totalPower) {
+      const cityBadge = document.getElementById('cityStatusBadge');
+      const gridText = document.getElementById('gridConditionText');
+      const gridCable = document.getElementById('smartGridCable');
+      
+      const windows = [
+        'winHosp1', 'winHosp2', 'winHosp3',
+        'winSch1', 'winSch2', 'winSch3', 'winSch4', 'winSch5', 'winSch6',
+        'winHouse1'
+      ];
+      const streetBulb = document.getElementById('streetLampBulb');
 
-      if (state.diksiKey === 'bombastis') {
-        tag.innerText = "Deteksi Kebohongan (Overclaim)";
-        dialogue.innerHTML = `<strong>"Hati-hati, ananda!"</strong> Kata 'Semua Penyakit Hilang Seketika' itu bukan hanya melanggar etika periklanan, tapi juga melanggar prinsip <em>Shiddiq</em> (Kejujuran). Pembeli cerdas akan menganggap ini produk abal-abal sehingga nilai amanahmu anjlok ke <strong>${ethics}/100</strong>. Bisakah kamu membuat judul yang tetap menarik tanpa perlu berbohong?`;
-      } else if (state.diksiKey === 'biasa') {
-        tag.innerText = "Evaluasi Daya Pikat (Hook)";
-        dialogue.innerHTML = `"Teks judulmu jujur, alhamdulillah. Tetapi nadanya terlalu datar seperti catatan belanjaan. Ingat, fungsi iklan adalah <strong>menggugah kebutuhan</strong> orang. Coba gunakan gaya bahasa solutif atau rima agar pembaca merasa produk ini menjawab masalah mereka!"`;
-      } else if (ethics >= 75 && closing >= 65 && hook >= 75) {
-        tag.innerText = "Mahakarya Retorika Berkah";
-        dialogue.innerHTML = `<strong>"Maa syaa Allah, luar biasa!"</strong> Perpaduan headline solutif, fakta produk yang amanah, serta CTA bernilai sedekah berhasil menciptakan daya tarik yang sangat tinggi tanpa menipu. Inilah esensi promosi bernilai tinggi yang mendatangkan berkah!`;
-      } else if (state.ctaKey === 'pasif') {
-        tag.innerText = "Evaluasi Call to Action";
-        dialogue.innerHTML = `"Desain dan kalimatmu sudah rapi, tapi ajakan bertindak (CTA)-mu sangat pasif ('Hubungi bila berminat'). Pembeli yang ragu butuh dorongan jelas, misalnya manfaat potongan harga khusus atau nilai infaq yang menggerakkan hati mereka untuk segera memesan."`;
+      if (totalPower === 0) {
+        // Padam Total
+        cityBadge.className = 'px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-200 text-slate-800 border border-slate-300 flex items-center gap-1.5';
+        cityBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span> Kota Blackout Total';
+        gridText.innerText = 'Semua generator mati. Kota tidak memiliki listrik sama sekali!';
+        gridCable.style.opacity = '0.1';
+        windows.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.setAttribute('fill', '#1e293b');
+        });
+        if (streetBulb) streetBulb.setAttribute('fill', '#64748b');
+
+      } else if (totalPower < state.minCityLitPower) {
+        // Redup / Prioritas Rumah Sakit Saja
+        cityBadge.className = 'px-3 py-1.5 rounded-lg font-bold text-xs bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5';
+        cityBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> Daya Kurang (Krisis)';
+        gridText.innerText = `Pasokan (${totalPower} kW) belum capai batas minimal (420 kW). Hanya RS yang menyala darurat.`;
+        gridCable.style.opacity = '0.4';
+
+        // Hanya RS menyala
+        windows.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.setAttribute('fill', id.startsWith('winHosp') ? '#facc15' : '#334155');
+          }
+        });
+        if (streetBulb) streetBulb.setAttribute('fill', '#64748b');
+
+      } else if (totalPower >= state.minCityLitPower && totalPower <= 530) {
+        // Optimal & Terang Sejahtera
+        cityBadge.className = 'px-3 py-1.5 rounded-lg font-bold text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5';
+        cityBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kota Terang Sejahtera';
+        gridText.innerText = `Sempurna! Listrik kota tercukupi (${totalPower} kW). Semua sekolah dan rumah beroperasi riang.`;
+        gridCable.style.opacity = '0.9';
+
+        windows.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.setAttribute('fill', '#fde047');
+        });
+        if (streetBulb) streetBulb.setAttribute('fill', '#fef08a');
+
       } else {
-        tag.innerText = "Uji Keseimbangan Persuasi";
-        dialogue.innerHTML = `"Perhatikan kembali: Daya pikatmu berada di angka <strong>${hook}</strong> dan potensi closing <strong>${closing}%</strong>. Coba naikkan kontras visual atau perkuat kalimat manfaat agar pembaca merasa wajib memiliki produk ini hari ini juga!"`;
+        // Overload Berlebih
+        cityBadge.className = 'px-3 py-1.5 rounded-lg font-bold text-xs bg-purple-100 text-purple-800 border border-purple-300 flex items-center gap-1.5';
+        cityBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span> Kelebihan Beban Grid';
+        gridText.innerText = `Peringatan: Pasokan (${totalPower} kW) melampaui kapasitas trafo 500 kW! Butuh sistem penyimpanan baterai.`;
+        gridCable.style.opacity = '1';
+
+        windows.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.setAttribute('fill', '#fde047');
+        });
+        if (streetBulb) streetBulb.setAttribute('fill', '#fef08a');
       }
     }
 
-    // Logika Verifikasi Misi
-    function checkMissionSuccess(hook, ethics, closing) {
-      const badge = document.getElementById('mission-badge');
-      if (hook >= 75 && ethics >= 70 && closing >= 65 && state.diksiKey !== 'bombastis') {
-        badge.innerText = "âœ“ MISI TERCAPAI (Kreator Unggul)";
-        badge.className = "px-2.5 py-1 text-xs font-extrabold rounded-md bg-emerald-500 text-white shadow-xs";
+    // Interaktivitas Socratic Bot "Volt"
+    function updateVoltFeedback(totalPower, fossilPower) {
+      const bubble = document.getElementById('voltSpeechBubble');
+      const hint = document.getElementById('voltHintState');
+
+      if (state.fossilActive && totalPower >= state.minCityLitPower) {
+        bubble.innerHTML = `
+          "Kota kita memang menyala terang, tapi perhatikan cerobong pabrik fosil itu! Asap hitam membuat udara tercemar (AQI buruk).
+          <span class='text-emerald-300 font-semibold'>Mampukah kamu mengganti daya batu bara dengan kombinasi angin dan air yang bebas polusi?</span>"
+        `;
+        hint.innerText = 'Refleksi: Dilema Ekologis Terdeteksi';
+      } else if (!state.isDayTime && state.powerSurya === 0 && totalPower < state.minCityLitPower) {
+        bubble.innerHTML = `
+          "Bzzzt! Matahari sudah terbenam, panel surya tertidur lelap (0 kW). Kota kekurangan daya!
+          <span class='text-sky-300 font-semibold'>Pembangkit mana yang bisa bekerja 24 jam tanpa perlu sinar matahari? Coba maksimalkan PLTA atau PLTB!</span>"
+        `;
+        hint.innerText = 'Refleksi: Sifat Intermittent Energi Terbarukan';
+      } else if (totalPower >= state.minCityLitPower && !state.fossilActive) {
+        bubble.innerHTML = `
+          "Luar Biasa! Ini racikan bauran energi masa depan sejati! Kota menyala 100% dari alam tanpa batuk asap sedikit pun.
+          <span class='text-emerald-300 font-semibold'>Kamu berhasil menjadi insinyur energi berkelanjutan Nusantara! 🌟</span>"
+        `;
+        hint.innerText = 'Misi Tercapai: 100% Hijau & Mandiri';
+      } else if (totalPower === 0) {
+        bubble.innerHTML = `
+          "Kota dalam kegelapan pekat! Rumah sakit pun tidak bisa menyalakan alat medis. Geser tuas panel surya atau buka bendungan air sekarang!"
+        `;
+        hint.innerText = 'Status: Darurat Listrik';
       } else {
-        badge.innerText = "Belum Tercapai (Target: Pikat>75, Amanah>70, Closing>65%)";
-        badge.className = "px-2 py-0.5 text-xs font-semibold rounded-md bg-amber-200 text-amber-900";
+        bubble.innerHTML = `
+          "Bagus! Daya mulai mengalir (${totalPower} kW), tapi masih ada gedung yang redup. Tambah sedikit lagi putaran angin atau debit air untuk mencapai minimal 450 kW!"
+        `;
+        hint.innerText = 'Progres: Menuju Titik Keseimbangan';
       }
     }
 
-    // Preset Pengujian Cepat
-    function applyPreset(mode) {
-      if (mode === 'lemah') {
-        document.getElementById('select-diksi').value = 'biasa';
-        document.getElementById('slider-value').value = 40;
-        document.getElementById('slider-visual').value = 35;
-        document.getElementById('select-cta').value = 'pasif';
-      } else if (mode === 'overclaim') {
-        document.getElementById('select-diksi').value = 'bombastis';
-        document.getElementById('slider-value').value = 90;
-        document.getElementById('slider-visual').value = 95;
-        document.getElementById('select-cta').value = 'urgensi';
-      } else if (mode === 'berkah') {
-        document.getElementById('select-diksi').value = 'solutif';
-        document.getElementById('slider-value').value = 85;
-        document.getElementById('slider-visual').value = 85;
-        document.getElementById('select-cta').value = 'berkah';
+    // Toggle Siklus Siang & Malam
+    function toggleTimeOfDay() {
+      state.isDayTime = !state.isDayTime;
+      const sky = document.getElementById('skyBackground');
+      const timeIcon = document.getElementById('timeIcon');
+      const timeLabel = document.getElementById('timeLabel');
+      const celestial = document.getElementById('celestialBody');
+      const moon = document.getElementById('moonDetail');
+      const sunCore = document.getElementById('sunCore');
+      const solarTag = document.getElementById('solarConditionTag');
+
+      if (state.isDayTime) {
+        sky.className = 'relative rounded-2xl overflow-hidden border border-slate-300/80 shadow-lg transition-all duration-700 day-sky';
+        timeIcon.innerText = '☀️';
+        timeLabel.innerText = 'Siang Terang';
+        celestial.setAttribute('transform', 'translate(100, 80)');
+        moon.style.opacity = '0';
+        sunCore.setAttribute('fill', '#facc15');
+        solarTag.className = 'px-2.5 py-1 rounded-md bg-amber-100/90 text-amber-900 text-[11px] font-bold shadow-xs flex items-center gap-1';
+        solarTag.innerHTML = '☀️ Foton Maksimal (100%)';
+      } else {
+        sky.className = 'relative rounded-2xl overflow-hidden border border-slate-300/80 shadow-lg transition-all duration-700 night-sky';
+        timeIcon.innerText = '🌙';
+        timeLabel.innerText = 'Malam Hari';
+        celestial.setAttribute('transform', 'translate(100, 70)');
+        moon.style.opacity = '1';
+        sunCore.setAttribute('fill', '#e2e8f0');
+        solarTag.className = 'px-2.5 py-1 rounded-md bg-slate-800 text-slate-200 text-[11px] font-bold shadow-xs flex items-center gap-1';
+        solarTag.innerHTML = '🌙 Nol Foton (0%)';
+      }
+
+      updateSimulation();
+    }
+
+    // Pertanyaan Pemantik Kritis Volt
+    function triggerVoltQuestion() {
+      const questions = [
+        "Mengapa turbin angin (PLTB) diletakkan di tempat tinggi atau pesisir pantai?",
+        "Jika musim kemarau panjang tiba, apa yang akan terjadi pada pasokan listrik PLTA kita?",
+        "Bagaimana cara kita menyimpan kelebihan energi matahari di siang hari agar bisa dipakai di malam hari?",
+        "Apakah energi panas bumi (geotermal) dipengaruhi oleh cuaca hujan badai?"
+      ];
+      const randomQ = questions[Math.floor(Math.random() * questions.length)];
+      const bubble = document.getElementById('voltSpeechBubble');
+      bubble.innerHTML = `<span class="text-amber-300 font-bold">Teka-Teki Volt:</span> "${randomQ}" Diskusikan hipotesismu bersama teman sekelompok!`;
+    }
+
+    // Skenario Studi Kasus Cepat (PBL)
+    function applyScenario(type) {
+      if (type === 'nightDeficit') {
+        state.isDayTime = true;
+        toggleTimeOfDay(); // Beralih ke malam
+        document.getElementById('sliderSurya').value = 180;
+        document.getElementById('sliderAngin').value = 60;
+        document.getElementById('sliderAir').value = 80;
+        document.getElementById('toggleFosil').checked = false;
+      } else if (type === 'eco100') {
+        if (!state.isDayTime) toggleTimeOfDay(); // Kembalikan ke siang
+        document.getElementById('sliderSurya').value = 180;
+        document.getElementById('sliderAngin').value = 140;
+        document.getElementById('sliderAir').value = 160;
+        document.getElementById('toggleFosil').checked = false;
       }
       updateSimulation();
     }
 
-    // Modal Handler
-    function toggleModal(id) {
-      const modal = document.getElementById(id);
-      modal.classList.toggle('hidden');
+    // Reset Semua Variabel
+    function resetSimulation() {
+      document.getElementById('sliderSurya').value = 0;
+      document.getElementById('sliderAngin').value = 0;
+      document.getElementById('sliderAir').value = 0;
+      document.getElementById('toggleFosil').checked = false;
+      if (!state.isDayTime) toggleTimeOfDay();
+      updateSimulation();
     }
 
-    // Inisialisasi awal saat load
+    // Modal Modul Non-Linear Pengetahuan
+    function openConceptModal(key) {
+      const item = conceptDatabase[key];
+      if (!item) return;
+
+      document.getElementById('modalIcon').innerText = item.icon;
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalCategory').innerText = item.category;
+      document.getElementById('modalDescription').innerHTML = item.description;
+      document.getElementById('modalFormula').innerText = item.formula;
+
+      document.getElementById('conceptModal').classList.remove('hidden');
+    }
+
+    function closeConceptModal() {
+      document.getElementById('conceptModal').classList.add('hidden');
+    }
+
+    // Inisialisasi awal saat halaman dimuat
     window.addEventListener('DOMContentLoaded', () => {
       updateSimulation();
     });
